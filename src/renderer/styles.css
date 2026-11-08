@@ -238,3 +238,16 @@ td.mini .portrait { height: 44px !important; }
 .tactics .morale { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
 .tactics .morale-bar { flex: 1; accent-color: #e0a04a; }
 .tactics .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+/* ---------------- 고유 스킬 (1.4.0) */
+.skills { margin: 18px 0; }
+.skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+.skill-card { display: flex; gap: 10px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.skill-card h4 { margin: 2px 0 4px; font-size: 14px; }
+.skill-card .fine { margin: 2px 0; }
+.skill-art { flex: 0 0 116px; height: 96px; background-repeat: no-repeat; }
+.slot { font-size: 11px; font-weight: 500; padding: 1px 6px; border-radius: 8px; margin-left: 4px; border: 1px solid var(--line); color: var(--muted); }
+.slot-0 { color: #ff9a9a; border-color: #7a3e48; }
+.slot-1 { color: #8fd0ff; border-color: #345a7a; }
+.slot-2 { color: #9fe0b0; border-color: #3f6e4c; }
+.slot-3 { color: #f4d077; border-color: #7a6330; }

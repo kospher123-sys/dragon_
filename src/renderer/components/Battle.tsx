@@ -4,9 +4,17 @@ import { COMMANDS } from '../../engine/engine';
 import { REGIONS, ROLES } from '../../engine/data';
 import { api } from '../util';
 import { speciesRow } from '../sprites';
+import { findSkill, fxVisible, type SkillDef } from '../../engine/skills';
 
 const NAMES = ['castle', 'sheet', 'party-motion', 'fx', 'map', 'species', 'monsters', 'village'] as const;
 type Imgs = Record<(typeof NAMES)[number], HTMLImageElement>;
+
+const skImgs = new Map<string, HTMLImageElement>();
+function skImg(name: string) {
+  let i = skImgs.get(name);
+  if (!i) { i = new Image(); i.src = `bf://img/${name}.png`; skImgs.set(name, i); }
+  return i;
+}
 
 function load(): Imgs {
   const o = {} as Imgs;
@@ -26,6 +34,8 @@ export function BattleCanvas({ state, paused }: { state: State; paused: boolean 
   useEffect(() => {
     const imgs = load();
     let frame = 0, raf = 0;
+    // 마지막 공격(phase)이 바뀐 프레임: 스킬 모션 진행도 계산용
+    let castPhase = -1, castFrame = 0;
     const ok = (i: HTMLImageElement) => i.complete && i.naturalWidth > 0;
     const draw = () => {
       const g = ref.current?.getContext('2d');
@@ -51,8 +61,13 @@ export function BattleCanvas({ state, paused }: { state: State; paused: boolean 
         if (ok(img)) g.drawImage(img, (c * img.width) / cols, (r * img.height) / rows, img.width / cols, img.height / rows, x, y, w, h);
       };
       const casting = b.dc > 2.1;
+      if (b.phase !== castPhase) { castPhase = b.phase; castFrame = frame; }
+      const sk = findSkill(d.species, b.skill);
+      const cp = Math.min(1, (frame - castFrame) / 90); // 1.5초
       g.save();
-      if (d.species === 0) cell(imgs.sheet, Math.floor(u * 7) % 6, casting ? 7 : 1, 8, 11, 45 + Math.sin(u * 1.7) * 22, 70, 310, 336);
+      if (sk && cp < 1 && drawSkillMotion(g, sk, cp, 30 + Math.sin(u * 1.7) * 22)) {
+        // 종족 고유 스킬 모션
+      } else if (d.species === 0) cell(imgs.sheet, Math.floor(u * 7) % 6, casting ? 7 : 1, 8, 11, 45 + Math.sin(u * 1.7) * 22, 70, 310, 336);
       else {
         const sp = speciesRow(d.species);
         if (sp.hue) g.filter = sp.hue;
@@ -60,7 +75,8 @@ export function BattleCanvas({ state, paused }: { state: State; paused: boolean 
       }
       g.restore();
       drawEnemies(g, imgs, b, u, cell, ok);
-      if (casting) {
+      if (sk) { if (cp < 1) drawSkillFx(g, sk, cp); } // 고유 스킬은 예전 공통 이펙트를 겹치지 않는다
+      else if (casting) {
         g.globalCompositeOperation = 'screen';
         g.globalAlpha = 0.65 + Math.sin(u * 20) * 0.25;
         cell(imgs.fx, b.phase % 2, Math.floor((b.phase % 4) / 2), 2, 2, 230, 130, 460, 220);
@@ -173,4 +189,46 @@ export function BattlePage() {
       )}
     </div>
   );
+}
+
+/** 전투 창의 스킬 모션 (준비 → 발동 → 회수). 칸 290×240 을 드래곤 자리(360 너비)에 맞춘다 */
+function drawSkillMotion(g: CanvasRenderingContext2D, sk: SkillDef, p: number, x: number): boolean {
+  const img = skImg(`sk-motion-${String(sk.species).padStart(2, '0')}`);
+  if (!(img.complete && img.naturalWidth > 0)) return false;
+  const col = p < 0.22 ? 0 : p < 0.75 ? 1 : 2;
+  const sw = img.width / 3, sh = img.height / 4;
+  g.drawImage(img, col * sw, sk.slot * sh, sw, sh, x, 64, 400, 400 * (240 / 290));
+  return true;
+}
+
+/** 전투 창의 스킬 이펙트. 바탕화면처럼 정확한 위치 대신 드래곤 쪽 / 적 무리 쪽 두 자리에 그린다 */
+function drawSkillFx(g: CanvasRenderingContext2D, sk: SkillDef, p: number) {
+  const hour = new Date().getHours();
+  const SELF = new Set(['self', 'selfGround', 'rise']);
+  for (const fx of sk.fx) {
+    if (!fxVisible(fx, hour)) continue;
+    const a = fx.from ?? 0.3, b = fx.to ?? 0.85;
+    if (p < a || p > b) continue;
+    const q = (p - a) / Math.max(0.01, b - a);
+    const img = skImg(fx.img);
+    if (!(img.complete && img.naturalWidth > 0)) continue;
+    g.save();
+    g.globalAlpha = Math.max(0, Math.min(1, q / 0.15, (1 - q) / 0.25));
+    if (fx.glow) g.globalCompositeOperation = 'lighter';
+    if (fx.at === 'beam') {
+      // 입(330, 210)에서 적 무리 가운데(680, 230)까지
+      const len = 380 * Math.min(1, q / 0.3);
+      const h = Math.max(18, Math.min(110, (img.height / img.width) * 380));
+      g.drawImage(img, 0, 0, img.width * (len / 380), img.height, 330, 220 - h / 2, len, h);
+    } else {
+      const w = Math.min(380, fx.w * 1.9), h = w * (img.height / img.width);
+      const self = SELF.has(fx.at);
+      const fly = fx.at === 'projectile' ? q : 1;
+      const cx = self ? 230 : fx.at === 'front' || fx.at === 'frontGround' || fx.at === 'mid' || fx.at === 'midGround' ? 440 : 330 + 350 * fly;
+      const ground = fx.at.endsWith('Ground') || fx.at === 'rise';
+      const cy = ground ? 390 : fx.at === 'sky' ? 120 + 130 * Math.min(1, q / 0.5) : 230;
+      g.drawImage(img, cx - w / 2, ground ? cy - h : cy - h / 2, w, h);
+    }
+    g.restore();
+  }
 }

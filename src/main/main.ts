@@ -179,8 +179,11 @@ function loadWorld() {
 
 /** 테스트판: 실험 규칙을 처음엔 모두 켠다 (설정 탭에서 끌 수 있음) */
 function testRules() {
-  if (TEST && !state.rules) state.rules = { defense: true, depletion: true, parallel: true, tactics: true };
-  else if (TEST && state.rules && state.rules.tactics === undefined) state.rules.tactics = true;
+  if (TEST && !state.rules) state.rules = { defense: true, depletion: true, parallel: true, tactics: true, skills: true };
+  else if (TEST && state.rules) {
+    if (state.rules.tactics === undefined) state.rules.tactics = true;
+    if (state.rules.skills === undefined) state.rules.skills = true; // 1.4.0 종족 고유 스킬
+  }
 }
 
 // ------------------------------------------------------------------ 진행 루프

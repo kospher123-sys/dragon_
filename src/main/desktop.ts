@@ -2,7 +2,7 @@
 import { BrowserWindow, ipcMain, screen, powerMonitor, nativeImage, type Display } from 'electron';
 import path from 'node:path';
 import type { State } from '../engine/engine';
-import { isAdult, titleOf, DEFEND_MAX } from '../engine/engine';
+import { isAdult, titleOf, DEFEND_MAX, rule } from '../engine/engine';
 import type { Settings, DesktopModel, HumanEvent } from '../shared/types';
 import { isFullscreenOn } from './fullscreen';
 
@@ -51,6 +51,7 @@ export function model(): DesktopModel {
     relations: s.relations,
     chatter: st.chatter ?? 'normal',
     raid: host.test && s.battle?.kind === 'raid' ? { defended: s.battle.defended ?? 0, max: DEFEND_MAX } : null,
+    skills: rule(s, 'skills'),
   };
 }
 
