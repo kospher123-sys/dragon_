@@ -8,6 +8,8 @@ import {
 import { SPECIES, GRADES, GRADE_COLOR, T, REGIONS, RATE } from '../../engine/data';
 import { api, dur, lairName, status, stage, clock } from '../util';
 import { Portrait } from './Portrait';
+import { skillsOf, SLOTS } from '../../engine/skills';
+import { rule } from '../../engine/engine';
 
 const NAME_A = ['칼', '아르', '벨', '모르', '세', '바', '이그', '루', '카', '네', '오', '자르', '헤', '드라'];
 const NAME_B = ['가', '노', '리', '시', '라', '토', '베', '니', '로', '스', '키', '란', '드', '르'];
@@ -136,6 +138,28 @@ export function DetailTab({ state, d, settings, setSettings }: { state: State; d
           {growMsg && <p className="muted">{growMsg}</p>}
         </section>
       )}
+      <section className="skills">
+        <h3>고유 스킬 <small className="muted">· {SPECIES[d.species]}{rule(state, 'skills') ? '' : ' · 실험 규칙 ‘종족 고유 스킬’이 꺼져 있어 공통 스킬을 씁니다'}</small></h3>
+        <div className="skill-grid">
+          {skillsOf(d.species).map((k) => (
+            <div key={k.slot} className="skill-card">
+              <div
+                className="skill-art"
+                style={{
+                  backgroundImage: `url(bf://img/sk-motion-${String(k.species).padStart(2, '0')}.png)`,
+                  backgroundSize: '300% 400%',
+                  backgroundPosition: `50% ${(k.slot / 3) * 100}%`,
+                }}
+              />
+              <div>
+                <h4>{k.name} <span className={'slot slot-' + k.slot}>{SLOTS[k.slot]}</span></h4>
+                <p className="fine">{k.desc}</p>
+                <p className="fine">{k.kind} · 바탕화면: {k.desk}{k.implemented ? '' : ' · 효과는 아직 없음(연출만)'}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
       <h3>성장 기록</h3>
       <ul className="events">
         {log.map((e, i) => <li key={i}><time>{clock(e.time)}</time>{e.text}</li>)}

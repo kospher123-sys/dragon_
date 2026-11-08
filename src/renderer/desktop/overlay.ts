@@ -3,6 +3,7 @@ import type { DesktopModel, DesktopDragon, DesktopApi, HumanEvent } from '../../
 import { sheets, speciesRow, hasSpeciesWalk, hasMonstersDesk } from '../sprites';
 import { GRADES, GRADE_COLOR, SPECIES } from '../../engine/data';
 import { personalityOf, type Personality } from '../../engine/engine';
+import { skillsOf, fxVisible, type SkillDef, type Fx } from '../../engine/skills';
 
 // ---------------------------------------------------------------- 상수
 const ATTACK_COOLDOWN = 1000; // ms, 연타해도 1초에 1회
@@ -33,6 +34,16 @@ for (const n of ['sheet', 'flight', 'species', 'monsters', 'nest', 'fx', 'party-
   imgs[n] = i;
 }
 const ready = (i: HTMLImageElement) => i.complete && i.naturalWidth > 0;
+// 종족 고유 스킬 그림 (sk-motion-NN, sk-NN-MM). 처음 쓸 때 불러온다.
+const skImgs = new Map<string, HTMLImageElement>();
+function skImg(name: string) {
+  let i = skImgs.get(name);
+  if (!i) { i = new Image(); i.src = `bf://img/${name}.png`; skImgs.set(name, i); }
+  return i;
+}
+const SKILL_TIME = 1.35; // 초, 조종 모드 스킬 (방어전 클릭 속도를 크게 늦추지 않게)
+const LIFE_TIME = 2.8; // 초, 생활 스킬 연출
+const SKILL_WEIGHTS = [0.45, 0.25, 0, 0.3]; // 조종 모드: 공격 · 방어 · (생활 제외) · 궁극기
 
 // ---------------------------------------------------------------- 엔티티
 type DMode = 'idle' | 'walk' | 'fly' | 'sleep' | 'attackFly' | 'cast' | 'leave';
@@ -58,6 +69,19 @@ interface DragonE {
   chase?: DragonE;
   /** 다른 레어에서 잠깐 찾아온 손님 (모델에 없음) */
   guest?: number;
+  /** 종족 고유 스킬 시전 중 (cast 모드에서 모션·이펙트를 그림) */
+  sk?: SkillCast;
+}
+
+interface SkillCast {
+  def: SkillDef;
+  t: number;
+  dur: number;
+  /** 대상 위치 (생활 스킬은 드래곤 앞) */
+  tx: number;
+  tyC: number;
+  /** 개발 확인용: 이 진행도에서 멈춤 */
+  hold?: number;
 }
 
 const present = (e: DragonE) => !e.gone && !e.hidden && !e.leaving;
@@ -91,7 +115,7 @@ let combo = 1;
 type Target = MonsterE | HumanE;
 const isHuman = (t: Target): t is HumanE => 'role' in t;
 
-interface Effect { skill: number; from: DragonE; target: Target; t: number; hitDone: boolean }
+interface Effect { skill: number; from: DragonE; target: Target; t: number; hitDone: boolean; dur: number; sk?: SkillDef }
 
 // ---------------------------------------------------------------- 상태
 let api: DesktopApi;
@@ -185,7 +209,7 @@ function applyModel(m: DesktopModel) {
           // 각성: 크게 반짝이며 포효
           props.push({ kind: 'spark', x: e.x, y: e.y - dragonSize(d).h * 0.5, t: 0, max: 3.5 });
           e.speech = `${GRADES[d.grade]}의 힘이 깨어났다!`; e.speechT = 4;
-          e.mode = 'cast'; e.timer = EFFECT_TIME * 1.5;
+          e.mode = 'cast'; e.timer = EFFECT_TIME * 1.5; e.sk = undefined;
         } else if ((d.level ?? 0) > (prev.level ?? 0)) {
           props.push({ kind: 'spark', x: e.x, y: e.y - dragonSize(d).h * 0.5, t: 0, max: 1.8 });
           if (e.speechT <= 0) { e.speech = `Lv.${d.level}! 강해졌다.`; e.speechT = 2.5; }
@@ -271,7 +295,25 @@ function clampNest(x: number, y: number) {
 /** 밤(오후 11시~오전 6시, 내 컴퓨터 시각)에는 둥지로 돌아가 자는 일이 잦다 */
 const isNight = () => { const h = new Date().getHours(); return h >= 23 || h < 6; };
 
+let nextLife = performance.now() + 30_000;
+
+/** 생활 스킬 연출: 가끔 한 마리가 제자리에서 자기 종족 생활 스킬을 보여 준다 */
+function tryLifeSkill(e: DragonE): boolean {
+  const now = performance.now();
+  if (!model.skills || control || defense || now < nextLife || e.d.hurt || isNight() || e.y < ground() - 2) return false;
+  if (Math.random() > 0.25) return false;
+  nextLife = now + rnd(45_000, 110_000);
+  const def = skillsOf(e.d.species)[2];
+  const sz = dragonSize(e.d);
+  e.mode = 'cast';
+  e.timer = LIFE_TIME;
+  e.sk = { def, t: 0, dur: LIFE_TIME, tx: e.x + e.facing * sz.w * 1.2, tyC: ground() - MONSTER_H / 2 };
+  if (chatty() && e.speechT <= 0) { e.speech = `${def.name}…`; e.speechT = 2.2; }
+  return true;
+}
+
 function pickNext(e: DragonE) {
+  if (tryLifeSkill(e)) return;
   const r = Math.random();
   if (e.d.hurt && Math.random() < 0.5) { e.mode = 'idle'; e.timer = rnd(6, 12); return; }
   const p = e.pers;
@@ -387,7 +429,7 @@ function stepDragon(e: DragonE, dt: number) {
       if (Math.abs(dx) > 2) e.facing = dx >= 0 ? 1 : -1;
       if (dist <= speed * dt) {
         e.x = e.tx; e.y = e.ty;
-        if (e.mode === 'attackFly') { e.mode = 'cast'; e.timer = EFFECT_TIME; break; }
+        if (e.mode === 'attackFly') { e.mode = 'cast'; e.timer = e.sk ? e.sk.dur : EFFECT_TIME; break; }
         if (e.leaving) { e.leaving = false; e.hidden = true; e.alpha = 0; e.mode = 'idle'; e.timer = 1e9; break; }
         if (e.hops > 0) { e.hops--; e.tx = rnd(sz.w, W - sz.w); e.ty = rnd(H * 0.15, H * 0.6); }
         else if (e.ty < ground() - 1) { e.tx = rnd(sz.w, W - sz.w); e.ty = ground(); }
@@ -400,6 +442,12 @@ function stepDragon(e: DragonE, dt: number) {
     }
     case 'cast':
       e.timer -= dt;
+      if (e.sk) {
+        if (e.sk.hold !== undefined) { e.sk.t = e.sk.hold * e.sk.dur; break; }
+        e.sk.t += dt;
+        if (e.timer <= 0) { e.sk = undefined; e.mode = 'idle'; e.timer = rnd(1.5, 3); }
+        break;
+      }
       if (e.timer <= 0) { e.mode = 'fly'; e.hops = 0; e.tx = e.x + e.facing * 60; e.ty = ground(); }
       break;
   }
@@ -469,14 +517,28 @@ function attack(m: Target) {
   e.chase = undefined;
   const skill = Math.floor(Math.random() * 4);
   const side = m.x > W / 2 ? -1 : 1;
-  e.mode = 'attackFly';
-  e.tx = Math.max(60, Math.min(W - 60, m.x + side * 110));
-  e.ty = ground() - MONSTER_H - 70;
+  const targetY = isHuman(m) ? ground() - HUMAN_H / 2 : ground() - MONSTER_H / 2;
+  let def: SkillDef | undefined;
+  if (model.skills) {
+    // 종족 고유 스킬: 대상 옆 땅에 내려앉아 시전한다
+    let r = Math.random() * SKILL_WEIGHTS.reduce((a, b) => a + b, 0);
+    const slot = SKILL_WEIGHTS.findIndex((w) => (r -= w) < 0);
+    def = skillsOf(e.d.species)[slot < 0 ? 0 : slot];
+    e.mode = 'attackFly';
+    e.tx = Math.max(60, Math.min(W - 60, m.x + side * (dragonSize(e.d).w * 0.5 + 110)));
+    e.ty = ground();
+    e.sk = { def, t: 0, dur: SKILL_TIME, tx: m.x, tyC: targetY };
+  } else {
+    e.sk = undefined;
+    e.mode = 'attackFly';
+    e.tx = Math.max(60, Math.min(W - 60, m.x + side * 110));
+    e.ty = ground() - MONSTER_H - 70;
+  }
   const dist = Math.hypot(e.tx - e.x, e.ty - e.y);
   e.speed = Math.max(260, dist / FLY_TO_TARGET);
   e.facing = m.x >= e.tx ? 1 : -1;
-  effect = { skill, from: e, target: m, t: -1, hitDone: false };
-  const name = skill === 0 && e.d.species !== 0 ? '숨결' : SKILL_NAMES[skill];
+  effect = { skill, from: e, target: m, t: -1, hitDone: false, dur: def ? SKILL_TIME : EFFECT_TIME, sk: def };
+  const name = def ? def.name : skill === 0 && e.d.species !== 0 ? '숨결' : SKILL_NAMES[skill];
   skillText = { text: `${e.d.name.split(' · ')[0]} · ${name}`, x: e.tx, y: e.ty - 90, t: 1.6 };
 }
 
@@ -489,7 +551,8 @@ function stepEffect(dt: number) {
     return;
   }
   effect.t += dt;
-  if (!effect.hitDone && effect.t >= EFFECT_TIME * 0.45) {
+  if (e.sk && e.sk.def === effect.sk) e.sk.tx = effect.target.x;
+  if (!effect.hitDone && effect.t >= effect.dur * (effect.sk ? 0.5 : 0.45)) {
     effect.hitDone = true;
     if (isHuman(effect.target)) {
       const h = effect.target;
@@ -512,7 +575,7 @@ function stepEffect(dt: number) {
       void api.bounty().then((err) => { if (!err) props.push({ kind: 'coin', x: m.x, y: ground() - MONSTER_H - 10, t: 0, max: 1.5 }); });
     }
   }
-  if (effect.t >= EFFECT_TIME) effect = null;
+  if (effect.t >= effect.dur) effect = null;
 }
 
 // ---------------------------------------------------------------- 인간 연출
@@ -562,7 +625,7 @@ function dragonMeets(id: string | undefined, x: number, type: string, fight = fa
     e.facing = x >= e.x ? 1 : -1;
     e.speech = pickLine(DRAGON_REPLIES[type] ?? DRAGON_REPLIES.pilgrim);
     e.speechT = 3.5;
-    if (fight) { e.mode = 'cast'; e.timer = EFFECT_TIME; }
+    if (fight) { e.mode = 'cast'; e.timer = EFFECT_TIME; e.sk = undefined; }
   }, fight ? 1800 : 2600);
 }
 
@@ -607,7 +670,7 @@ function onHumanEvent(ev: HumanEvent) {
       if (!present(e)) return;
       e.speech = (won ? ['둥지는 무사하다!', '크아아앙—! 이겼다!', '다시는 오지 마라!'] : ['…둥지가 엉망이 됐어.', '알들은 무사한가?', '다음엔 반드시 지킨다.'])[i];
       e.speechT = 3.5;
-      if (won && e.mode !== 'fly') { e.mode = 'cast'; e.timer = EFFECT_TIME; }
+      if (won && e.mode !== 'fly') { e.mode = 'cast'; e.timer = EFFECT_TIME; e.sk = undefined; }
     }, i * 900));
     if (!won) smokeUntil = performance.now() + 90_000;
     return;
@@ -1121,8 +1184,149 @@ function tooltip(text: string, x: number, y: number) {
   g.restore();
 }
 
+// ---------------------------------------------------------------- 종족 고유 스킬 그리기
+/** 스킬 모션 칸(290×240)을 그릴 크기. 드래곤 몸이 칸 너비의 ~85%를 차지한다 */
+function motionSize(d: DesktopDragon) {
+  const k = (d.adult ? 1 : 0.65) * [0.8, 0.94, 1, 1.07, 1.17][d.grade];
+  const w = 200 * k;
+  return { w, h: w * (240 / 290), unit: w / 200 };
+}
+
+/** 시전 중 모션 (준비 → 발동 → 회수) */
+function drawSkillMotion(e: DragonE, cast: SkillCast): boolean {
+  const img = skImg(`sk-motion-${String(cast.def.species).padStart(2, '0')}`);
+  if (!ready(img)) return false;
+  const p = cast.t / cast.dur;
+  const col = p < 0.22 ? 0 : p < 0.75 ? 1 : 2;
+  const { w, h } = motionSize(e.d);
+  // 발동 순간 살짝 앞으로 내딛는다
+  const lunge = col === 1 ? Math.sin(Math.min(1, (p - 0.22) / 0.2) * Math.PI / 2) * 6 * e.facing : 0;
+  cell(img, col, cast.def.slot, 3, 4, e.x - w / 2 + lunge, e.y - h, w, h, e.facing < 0);
+  return true;
+}
+
+const BACK_FX = new Set(['rise', 'selfGround']);
+
+/** 스킬 이펙트. layer 'back' 은 드래곤 뒤(솟아오름·발밑), 'front' 는 앞 */
+function drawSkillFx(e: DragonE, cast: SkillCast, layer: 'back' | 'front') {
+  const p = cast.t / cast.dur;
+  const f = e.facing;
+  const { w: W0, h: H0, unit } = motionSize(e.d);
+  const perfK = model.perf === 'low' ? 0.8 : 1;
+  const hour = new Date().getHours();
+  const mouth = { x: e.x + f * W0 * 0.36, y: e.y - H0 * 0.6 };
+  const selfC = { x: e.x, y: e.y - H0 * 0.45 };
+  const tgt = { x: cast.tx, y: cast.tyC };
+  const gy = ground();
+  for (const fx of cast.def.fx) {
+    if (BACK_FX.has(fx.at) !== (layer === 'back') || !fxVisible(fx, hour)) continue;
+    const a = fx.from ?? 0.3, b = fx.to ?? 0.85;
+    if (p < a || p > b) continue;
+    const q = (p - a) / Math.max(0.01, b - a); // 구간 안 진행도
+    const img = skImg(fx.img);
+    if (!ready(img)) continue;
+    const alpha = Math.min(1, q / 0.15, (1 - q) / 0.25) * e.alpha;
+    const fw = fx.w * unit * perfK;
+    const fh = fw * (img.height / img.width);
+    const dy = (fx.dy ?? 0) * unit;
+    const n = fx.n ?? 1;
+    g.save();
+    g.globalAlpha = Math.max(0, alpha);
+    if (fx.glow) g.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < n; i++) {
+      const spread = (i - (n - 1) / 2);
+      drawOneFx(fx, img, q, i, spread, { f, fw, fh, dy, mouth, selfC, tgt, gy, e, W0, H0 });
+    }
+    g.restore();
+  }
+}
+
+interface FxCtx { f: number; fw: number; fh: number; dy: number; mouth: { x: number; y: number }; selfC: { x: number; y: number }; tgt: { x: number; y: number }; gy: number; e: DragonE; W0: number; H0: number }
+
+function drawOneFx(fx: Fx, img: HTMLImageElement, q: number, i: number, spread: number, c: FxCtx) {
+  const { f, fw, fh, dy, mouth, selfC, tgt, gy, e, W0 } = c;
+  const flip = f < 0;
+  const at = fx.at;
+  // 기준점: 가운데 또는 밑면 가운데
+  const put = (x: number, y: number, ground = false) => {
+    const sx = spread * fw * 0.85;
+    const pop = 0.85 + 0.15 * Math.min(1, q / 0.2); // 나타날 때 살짝 커지며
+    const w = fw * pop, h = fh * pop;
+    g.save();
+    g.translate(x + sx, y + dy);
+    if (flip) g.scale(-1, 1);
+    g.drawImage(img, -w / 2, ground ? -h : -h / 2, w, h);
+    g.restore();
+  };
+  switch (at) {
+    case 'target': return put(tgt.x, tgt.y);
+    case 'targetGround': return put(tgt.x, gy, true);
+    case 'self': return put(selfC.x, selfC.y);
+    case 'selfGround': return put(e.x, gy, true);
+    case 'front': return put(e.x + f * W0 * 0.7, selfC.y);
+    case 'frontGround': return put(e.x + f * W0 * 0.7, gy, true);
+    case 'mid': return put((mouth.x + tgt.x) / 2, (mouth.y + tgt.y) / 2);
+    case 'midGround': return put((e.x + f * W0 * 0.3 + tgt.x) / 2, gy, true);
+    case 'rise': {
+      const up = (1 - Math.min(1, q / 0.4)) * 30;
+      return put(e.x - f * W0 * 0.15, e.y - c.H0 * 0.15 + up, true);
+    }
+    case 'beam': {
+      // 입에서 대상까지 늘어난다. 그림 왼쪽이 시작점
+      const dx = tgt.x - mouth.x, dyy = tgt.y - mouth.y;
+      const len = Math.hypot(dx, dyy) * Math.min(1, q / 0.3) + 10;
+      const h = Math.max(14, Math.min(90, (img.height / img.width) * Math.hypot(dx, dyy)));
+      g.save();
+      g.translate(mouth.x, mouth.y + spread * 12);
+      g.rotate(Math.atan2(dyy, dx));
+      g.drawImage(img, 0, 0, img.width * Math.min(1, len / Math.hypot(dx, dyy)), img.height, 0, -h / 2, len, h);
+      g.restore();
+      return;
+    }
+    case 'projectile': {
+      const lag = i * 0.12;
+      const k = Math.max(0, Math.min(1, (q - lag) / Math.max(0.2, 0.75 - lag)));
+      if (k <= 0) return;
+      const ox = spread * 10, oy = spread * 22;
+      const x = mouth.x + (tgt.x - mouth.x) * k + ox;
+      const y = mouth.y + (tgt.y + oy - mouth.y) * k - Math.sin(k * Math.PI) * 30 * Math.abs(spread);
+      g.save();
+      g.translate(x, y);
+      g.rotate(Math.atan2(tgt.y + oy - mouth.y, tgt.x - mouth.x));
+      g.drawImage(img, -fw / 2, -fh / 2, fw, fh);
+      g.restore();
+      return;
+    }
+    case 'sky': {
+      const sx = tgt.x + spread * 45;
+      if (fh > fw * 1.5) {
+        // 번개처럼 세로로 긴 그림: 위에서 아래로 한 번에 내리친다
+        const reveal = Math.min(1, q / 0.2);
+        g.save();
+        g.beginPath();
+        g.rect(sx - fw, gy - fh, fw * 2, fh * reveal);
+        g.clip();
+        g.drawImage(img, sx - fw / 2, gy - fh, fw, fh);
+        g.restore();
+        return;
+      }
+      const lag = i * 0.15;
+      const k = Math.max(0, Math.min(1, (q - lag) / 0.55));
+      if (k <= 0) return;
+      g.save();
+      g.translate(sx, tgt.y - (1 - k) * 260);
+      if (flip) g.scale(-1, 1);
+      g.drawImage(img, -fw / 2, -fh / 2, fw, fh);
+      g.restore();
+      return;
+    }
+  }
+}
+
 function drawDragon(e: DragonE) {
   const sz = dragonSize(e.d);
+  const cast = e.mode === 'cast' && e.sk ? e.sk : null;
+  if (cast) drawSkillFx(e, cast, 'back');
   const flying = e.mode === 'fly' || e.mode === 'attackFly' || (e.mode === 'cast' && e.y < ground() - 5);
   const bob = flying ? Math.sin(e.anim * 6) * 4 : 0;
   const x = e.x - sz.w / 2, y = e.y - sz.h + bob;
@@ -1130,13 +1334,15 @@ function drawDragon(e: DragonE) {
   g.globalAlpha = e.alpha;
   const filters: string[] = [];
   const sp = e.d.species === 0 ? null : speciesRow(e.d.species);
-  if (sp?.hue) filters.push(sp.hue);
+  if (sp?.hue && !cast) filters.push(sp.hue); // 스킬 모션은 종족 고유 색으로 그려져 있다
   if (e.d.grade === 4) filters.push('drop-shadow(0 0 8px #d06cff)');
   else if (e.d.grade === 3) filters.push(`drop-shadow(0 0 ${4 + Math.sin(e.anim * 2) * 1.5}px #ffc96b)`);
   if (filters.length) g.filter = filters.join(' ');
   // 시트의 그림은 오른쪽을 본다
   const flip = e.facing < 0;
-  if (e.d.species === 0) {
+  if (cast && drawSkillMotion(e, cast)) {
+    // 종족 고유 스킬 모션
+  } else if (e.d.species === 0) {
     if (flying && e.mode !== 'cast') {
       const f = Math.floor(e.anim * 8) % 4;
       const fw = sz.w * 1.25, fh = fw * (443 / 887);
@@ -1157,6 +1363,7 @@ function drawDragon(e: DragonE) {
     else cell(sheets.species, col, sp!.row, 4, sp!.rows, -sz.w / 2, -sz.h / 2, sz.w, sz.h, flip);
   }
   g.restore();
+  if (cast) drawSkillFx(e, cast, 'front');
   if (e.mode === 'sleep') {
     g.save();
     g.globalAlpha = 0.6 + Math.sin(e.anim * 2) * 0.3;
@@ -1289,7 +1496,7 @@ function drawMonsterExtras(m: MonsterE, h: number, w = h * 1.1) {
 }
 
 function drawEffect() {
-  if (!effect || effect.t < 0) return;
+  if (!effect || effect.t < 0 || effect.sk) return;
   const k = effect.t / EFFECT_TIME;
   const scale = model.perf === 'low' ? 0.5 : 1;
   const e = effect.from, m = effect.target;
@@ -1322,7 +1529,7 @@ function drawEffect() {
   }
   g.restore();
   // 파티클 (고사양만)
-  if (model.perf === 'high' && effect.hitDone) {
+  if (model.perf === 'high' && effect.hitDone && !effect.sk) {
     g.save();
     for (let i = 0; i < 10; i++) {
       const a = i * 0.63 + effect.t * 3;
@@ -1576,6 +1783,26 @@ export async function startOverlay(a: DesktopApi) {
   api.onHuman(onHumanEvent);
   // 개발 확인용: 콘솔에서 __bfHuman('tribute') 처럼 부를 수 있다
   (window as unknown as { __bfHuman: (t: HumanEvent['type'], sp?: number) => void }).__bfHuman = (type, sp) => onHumanEvent({ type, species: sp ?? 3, why: 'egg' });
+  // 개발 확인용: 종족 sp 의 슬롯 slot 스킬을 첫 몬스터에게 시전. hold(0~1)를 주면 그 순간에서 멈춘다.
+  (window as unknown as { __bfSkill: (sp: number, slot: number, hold?: number, x?: number) => void }).__bfSkill = (sp, slot, hold, x) => {
+    const def = skillsOf(sp)[slot];
+    if (!def) return;
+    const id = 'skill-test-' + sp;
+    for (const [k] of dragons) if (k.startsWith('skill-test-') && k !== id) dragons.delete(k);
+    let e = dragons.get(id);
+    if (!e) {
+      const d: DesktopDragon = { id, name: SPECIES[sp], species: sp, grade: 2, adult: true, home: sp };
+      e = { d, x: 0, y: ground(), tx: 0, ty: ground(), facing: 1, mode: 'idle', timer: 1e9, anim: 0, hops: 0, speech: '', speechT: 0, alpha: 1, speed: 50, pers: '도도', guest: 1e9 };
+      dragons.set(id, e);
+    }
+    const m = monsters[0];
+    e.x = x ?? 200; e.y = ground(); e.facing = 1; e.alpha = 1;
+    if (m) { m.x = e.x + motionSize(e.d).w * 0.5 + 170; m.mode = 'idle'; m.timer = 1e9; m.dir = -1; }
+    const dur = slot === 2 ? LIFE_TIME : SKILL_TIME;
+    e.mode = 'cast';
+    e.timer = hold === undefined ? dur : 1e9;
+    e.sk = { def, t: (hold ?? 0) * dur, dur, tx: slot === 2 || !m ? e.x + dragonSize(e.d).w * 1.2 : m.x, tyC: ground() - MONSTER_H / 2, hold };
+  };
   api.onCursor((p) => {
     if (dragging) return; // 끄는 중에는 창의 실제 마우스 이벤트를 쓴다
     mouse = p;

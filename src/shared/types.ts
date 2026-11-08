@@ -86,6 +86,8 @@ export interface DesktopModel {
   chatter?: 'many' | 'normal' | 'few';
   /** 레어 습격 진행 중 (바탕화면 방어전) */
   raid?: { defended: number; max: number } | null;
+  /** 실험 규칙 '종족 고유 스킬' (스킬 모션·이펙트 연출) */
+  skills?: boolean;
 }
 
 

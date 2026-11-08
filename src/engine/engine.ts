@@ -1,4 +1,5 @@
 // 게임 엔진: 웹 버전 규칙을 실시간 방치형에 맞게 옮긴 순수 로직. 화면·파일 접근 없음.
+import { skillsOf, findSkill } from './skills';
 import {
   T, RATE, TIME_SCALE, SPECIES, GRADES, GRADE_MULT, REGIONS, START_TOWNS, NEW_TOWNS, ROLES,
 } from './data';
@@ -66,12 +67,13 @@ export interface Dragon {
   last?: { place: string; won: boolean };
 }
 
-export type RuleKey = 'defense' | 'depletion' | 'parallel' | 'tactics';
+export type RuleKey = 'defense' | 'depletion' | 'parallel' | 'tactics' | 'skills';
 export const RULES: [RuleKey, string, string][] = [
   ['defense', '레어 총력 방어', '습격 때 레어의 건강한 성체(최대 3)가 함께 싸워 수호자의 공격력은 오르고 받는 피해는 나뉜다. 수호자는 위급하면 물러나고, 함락 피해도 절반'],
   ['depletion', '사냥터 고갈', '같은 사냥터에서 이길수록 유물이 줄고(−25%씩, 최소 15%) 1시간에 걸쳐 회복된다. 알아서 사냥은 풍요로운 곳을 고른다'],
   ['tactics', '전술 전투', '적에게 사기가 생겨 동료가 쓰러지거나 포효를 들으면 꺾이고, 0이 되면 달아난다(인간이 더 쉽게 무너짐). 전투 창에서 8초마다 지휘 명령(집중 공격·방어 자세·위압의 포효·후퇴)을 내릴 수 있다'],
   ['parallel', '동시 사냥', '다른 전투가 진행 중이어도 사냥터에 도착한 드래곤은 기다리지 않고 바로 싸운다(전투 화면 없이 결과만)'],
+  ['skills', '종족 고유 스킬', '공통 스킬 대신 종족마다 고유 스킬(공격·방어·궁극기 + 파멸의 발톱)을 쓰고, 바탕화면·전투 창에 스킬 모션과 이펙트가 나온다. 생활 스킬은 바탕화면에서 가끔 연출된다. 지금은 이름·연출·공격 범위만 다르고 고유 효과는 아직 없다'],
 ];
 export const rule = (s: State, k: RuleKey) => !!s.rules?.[k];
 export const regionYield = (s: State, i: number) => s.yields?.[i] ?? 1;
@@ -646,12 +648,23 @@ function startBattle(s: State, ctx: Ctx, d: Dragon, force: number, place: string
   log(s, ctx, `${place}에서 교전 발생 · 적 ${count.toLocaleString()} 전력.`, kind === 'raid' ? 'raid' : 'info', d.id);
 }
 
-export const SKILLS = (d: Dragon) => [
-  d.species === 0 ? '흑염 브레스' : SPECIES[d.species] + '의 숨결',
-  '파멸의 발톱',
-  '낙성 강습',
-  d.grade === 4 ? '패왕의 포효' : '용의 위압',
-];
+export const SKILLS = (d: Dragon, s?: State) => {
+  if (s && rule(s, 'skills')) {
+    // 종족 고유 스킬: 공격 · 방어 · 궁극기 + 공통 단일 공격 (생활 스킬은 바탕화면 전용)
+    const k = skillsOf(d.species);
+    return [k[0].name, k[1].name, k[3].name, '파멸의 발톱'];
+  }
+  return [
+    d.species === 0 ? '흑염 브레스' : SPECIES[d.species] + '의 숨결',
+    '파멸의 발톱',
+    '낙성 강습',
+    d.grade === 4 ? '패왕의 포효' : '용의 위압',
+  ];
+};
+
+/** 이 스킬이 살아 있는 적 전체를 나눠 치는가 */
+const isAreaSkill = (s: State, d: Dragon, skill: string) =>
+  rule(s, 'skills') ? !!findSkill(d.species, skill)?.area : /브레스|숨결|강습/.test(skill);
 
 function endBattle(s: State, ctx: Ctx, won: boolean, retreat = false) {
   const b = s.battle!;
@@ -789,7 +802,7 @@ function battleStep(s: State, ctx: Ctx, dt: number) {
   if (b.dc <= 0) {
     b.dc = 2 + rand(s) * 2;
     const crit = rand(s) < 0.18;
-    const skill = SKILLS(d)[Math.floor(rand(s) * 4)];
+    const skill = SKILLS(d, s)[Math.floor(rand(s) * 4)];
     const helpers = defenders(s, d);
     const ord = b.order && b.order.until > b.t ? b.order.type : null;
     const dmg = d.power * (isAdult(d) ? 1 : 0.4) * (1 - Math.min(0.4, d.injury * 0.04)) * (1 + rand(s)) * (crit ? 3 : 1) * (1 + 0.35 * helpers.length)
@@ -800,7 +813,7 @@ function battleStep(s: State, ctx: Ctx, dt: number) {
       // 집중 공격: 가장 약한 적 하나를 노린다
       const u = [...alive].sort((x, y) => x.hp - y.hp)[0];
       if (u) u.hp = Math.max(0, u.hp - dmg);
-    } else if (/브레스|숨결|강습/.test(skill)) {
+    } else if (isAreaSkill(s, d, skill)) {
       for (const u of alive) u.hp = Math.max(0, u.hp - (dmg / Math.max(1, alive.length)) * 1.4);
     } else {
       const u = alive[Math.floor(rand(s) * alive.length)];
