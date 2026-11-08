@@ -1,12 +1,15 @@
 // 테스트판 밸런스: 켜 둔 채(온라인) N시간. 자동 사냥 끔/켬 비교.  npx tsx tools/balance-growth.ts 40 8
 import { newState, act, step, newCtx, canTrain, canAwaken, titleOf, type State } from '../src/engine/engine';
+import { SOLO } from '../src/engine/skillfx';
+// SKILLS=1 이면 종족 고유 스킬 규칙도 켜고, SOLO=0 이면 '아군 필요' 12개 혼자 판본 효과만 끈다
+SOLO.on = process.env.SOLO !== '0';
 const N = Number(process.argv[2] || 40), hours = Number(process.argv[3] || 8);
 function sim(auto: boolean, spend: boolean, rules = false) {
   let over = 0, gDead = 0, res = 0, lv = 0, wins = 0, grade = 0, humans = 0, deaths = 0;
   for (let i = 0; i < N; i++) {
     const s: State = newState(5000 + i * 7919);
     act(s, { type: 'start', name: '카르' });
-    if (rules) s.rules = { defense: true, depletion: true, parallel: true, tactics: process.env.TACT !== '0' };
+    if (rules) s.rules = { defense: true, depletion: true, parallel: true, tactics: process.env.TACT !== '0', skills: process.env.SKILLS === '1' };
     const g0 = s.dragons[0].id;
     const ctx = newCtx(false);
     for (let t = 0; t < hours * 3600; t += 0.5) {
