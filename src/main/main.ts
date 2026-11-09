@@ -17,6 +17,8 @@ import { DEFAULT_SETTINGS, type Settings, type Snapshot, type InitData, type Not
 declare const EDITION: string;
 const TEST = typeof EDITION !== 'undefined' && EDITION === 'test';
 const APP_NAME = TEST ? '흑염룡-테스트' : '흑염룡';
+/** 1.5.0: 테스트판 기능을 본편 기본으로 승격. 테스트판과 다른 점은 저장 폴더·이름·자동 실행·본편 복사뿐 */
+const FEATURES = true;
 
 app.setName(APP_NAME);
 app.setAppUserModelId(TEST ? 'com.blackflame.desktop.test' : 'com.blackflame.desktop');
@@ -155,8 +157,16 @@ function seedFromMain() {
 }
 let copiedFromMain = false;
 
+/** 1.5.0 본편 첫 실행: 예전 버전 저장을 한 번만 따로 남겨 둔다 (되돌리고 싶을 때 이 파일을 world.json으로) */
+function keepPre15() {
+  if (TEST) return;
+  const keep = path.join(dir, 'world.before-1.5.0.json');
+  try { if (fs.existsSync(WORLD) && !fs.existsSync(keep)) fs.copyFileSync(WORLD, keep); } catch { /* 복사 실패해도 진행 */ }
+}
+
 function loadWorld() {
   seedFromMain();
+  keepPre15();
   const file = readJson<SaveFile>(WORLD) ?? readJson<SaveFile>(BACKUP);
   if (file && file.format === 'blackflame-desktop-save') {
     try {
@@ -177,10 +187,10 @@ function loadWorld() {
   testRules();
 }
 
-/** 테스트판: 실험 규칙을 처음엔 모두 켠다 (설정 탭에서 끌 수 있음) */
+/** 실험 규칙을 처음엔 모두 켠다 (설정 탭에서 끌 수 있음). 1.5.0부터 본편도 같다 */
 function testRules() {
-  if (TEST && !state.rules) state.rules = { defense: true, depletion: true, parallel: true, tactics: true, skills: true };
-  else if (TEST && state.rules) {
+  if (FEATURES && !state.rules) state.rules = { defense: true, depletion: true, parallel: true, tactics: true, skills: true };
+  else if (FEATURES && state.rules) {
     if (state.rules.tactics === undefined) state.rules.tactics = true;
     if (state.rules.skills === undefined) state.rules.skills = true; // 1.4.0 종족 고유 스킬
   }
@@ -365,8 +375,8 @@ function refreshTray() {
     { label: '관리 창 열기\tCtrl+Alt+M', click: () => openManager() },
     { label: (settings.hiddenAll ? '바탕화면 드래곤 보이기' : '바탕화면 드래곤 모두 숨기기') + (hideKeyOk ? '\tCtrl+Alt+D' : ''), click: () => toggleHiddenAll() },
     { label: '바탕화면 새로 고침', click: () => hardReset() },
-    ...(TEST ? [{ label: '바탕화면 드래곤 사진 찍기', click: () => { void takePhoto(); } }] : []),
-    ...(TEST ? [{
+    ...(FEATURES ? [{ label: '바탕화면 드래곤 사진 찍기', click: () => { void takePhoto(); } }] : []),
+    ...(FEATURES ? [{
       label: state?.dragons.some((d) => !d.dead && d.home === 0 && d.auto !== undefined) ? '자동 사냥 모두 끄기' : '내 레어 모두 자동 사냥 (알아서)',
       click: () => {
         const on = !state.dragons.some((d) => !d.dead && d.home === 0 && d.auto !== undefined);
@@ -461,6 +471,7 @@ function registerIpc() {
       monitors: screen.getAllDisplays().map((d, i) => ({ id: i, label: `${i + 1}번 모니터 (${d.size.width}×${d.size.height})${d.id === screen.getPrimaryDisplay().id ? ' · 주 모니터' : ''}` })),
       archives: listArchives(),
       edition: TEST ? 'test' : 'stable',
+      features: FEATURES,
     };
   });
   ipcMain.handle('act', (_e, a: Action) => {
@@ -590,7 +601,7 @@ app.whenReady().then(() => {
   startDesktop({
     state: () => state,
     act: (a) => { const err = act(state, a, null); if (!err) { dirty = true; broadcast(); } return err; },
-    test: TEST,
+    test: FEATURES,
     settings: () => settings,
     saveSettings: (patch) => { settings = { ...settings, ...patch }; saveSettings(); },
     openManager: () => openManager(),

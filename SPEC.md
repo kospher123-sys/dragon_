@@ -158,3 +158,9 @@ sh tools/pack.sh release   # Windows 포터블 폴더 (아이콘 교체 포함)
 - 수치는 기획 원안보다 크게 낮췄다(혼자 판본은 대상이 1명이라 같은 수치면 너무 강함). 원안 대비 주요 차이: 금박 40%·3턴 → 8%·1턴, 구전 ×0.7 → ×0.08, 접순 기생 → 기본 피해 8%, 능선 누적 +0.4 → +0.1.
 - 밸런스: `npx tsx tools/balance-skills.ts 600` — 종족별 같은 전투(공격력 60·생명력 900, 적 전력 700/1000)를 효과 켬/끔으로 비교. 전력 1000(승률 약 80% 구간)에서 승률 차이 −2.3~+5.3%p. 이 구간은 생명력 몇 %로 후퇴 여부가 갈려 민감하다(금박 보호막 63 → +12%p였음).
   - `SKILLS=1 SOLO=0|1 npx tsx tools/balance-growth.ts 30 8`: 실험 규칙 켠 8시간 성장 비교.
+
+## 11. 본편 승격 (v1.5.0)
+- `src/main/main.ts`의 `FEATURES = true`: 성장·자동 사냥 UI, 실험 규칙 기본 켬, 트레이 사진·일괄 자동 사냥, 바탕화면 방어전이 본편에서도 동작. 렌더러는 `init.features`로 판단(예전 `init.edition === 'test'` 기능 분기).
+- 테스트판에만 남는 것: 저장 폴더 `흑염룡-테스트`, 'TEST' 배지, 자동 실행 끔, 본편 저장 복사·다시 복사.
+- 본편 빌드: `sh tools/pack.sh <out>` (BUILD 기본값 build). 테스트판: `BUILD=build:test sh tools/pack.sh <out>`.
+- 본편 첫 실행 시 `%APPDATA%\흑염룡\world.before-1.5.0.json` 보존.
