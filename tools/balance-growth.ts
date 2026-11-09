@@ -1,7 +1,7 @@
 // 테스트판 밸런스: 켜 둔 채(온라인) N시간. 자동 사냥 끔/켬 비교.  npx tsx tools/balance-growth.ts 40 8
 import { newState, act, step, newCtx, canTrain, canAwaken, titleOf, type State } from '../src/engine/engine';
 import { SOLO } from '../src/engine/skillfx';
-// SKILLS=1 이면 종족 고유 스킬 규칙도 켜고, SOLO=0 이면 '아군 필요' 12개 혼자 판본 효과만 끈다
+// SKILLS=1 이면 종족 고유 스킬 규칙도 켜고, SOLO=0 이면 고유 효과·적 쪽 확장만 끈다(v1.4 방식)
 SOLO.on = process.env.SOLO !== '0';
 const N = Number(process.argv[2] || 40), hours = Number(process.argv[3] || 8);
 function sim(auto: boolean, spend: boolean, rules = false) {
