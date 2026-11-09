@@ -207,7 +207,7 @@ td.mini .portrait { height: 44px !important; }
 
 .warn-banner { background: #3a3018; border: 1px solid #7a6530; color: #ffe2a0; border-radius: 10px; padding: 8px 14px; margin-bottom: 14px; font-size: 13px; }
 
-/* 성장 (테스트판) */
+/* 성장 */
 .grow { margin-top: 16px; }
 .grow-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .grow-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }

@@ -124,7 +124,6 @@ export function App() {
           </div>
           <button className="wide" onClick={() => setTab('detail')}>{init.features ? '성장·수련·자동 사냥 ↗' : '성장 기록 ↗'}</button>
           <div className="resource">✧ 고대 유물 <strong>{s.resources}</strong></div>
-          {init.edition === 'test' && <div className="test-badge">테스트판 · 본편 저장과 분리됨</div>}
           <p className="fine">당신은 목적지를 선택합니다.<br />여행과 전투의 결과는 용들이 만들어갑니다.</p>
         </aside>
         <main className="main">
@@ -133,7 +132,7 @@ export function App() {
           </nav>
           <div className="tab-body">
             {tab === 'map' && <MapTab state={s} selected={d} onSelect={select} onLair={goLair} />}
-            {tab === 'lair' && <LairTab edition={init.features ? 'test' : init.edition} state={s} settings={settings} setSettings={setSettings} selected={d.id} onSelect={(id) => { select(id); }} focusLair={focusLair} />}
+            {tab === 'lair' && <LairTab full={!!init.features} state={s} settings={settings} setSettings={setSettings} selected={d.id} onSelect={(id) => { select(id); }} focusLair={focusLair} />}
             {tab === 'detail' && <DetailTab state={s} d={d} settings={settings} setSettings={setSettings} />}
             {tab === 'history' && <HistoryTab state={s} archives={init.archives} />}
             {tab === 'human' && <HumanTab state={s} />}
@@ -146,8 +145,8 @@ export function App() {
       {!summary && init.features && showHelp && (
         <div className="overlay">
           <div className="modal">
-            <small>{init.edition === 'test' ? 'TEST EDITION' : 'VERSION 1.5'}</small>
-            <h2>{init.edition === 'test' ? '테스트판에 새로 생긴 것' : '1.5.0에서 새로 생긴 것'}</h2>
+            <small>VERSION 1.5</small>
+            <h2>1.5.0에서 새로 생긴 것</h2>
             <ul className="help-list">
               <li><b>성장</b> · 드래곤 상세 탭에서 수련(근력·비늘·날개)과 각성. 고대 유물을 씁니다.</li>
               <li><b>자동 사냥</b> · 드래곤 상세·지도·레어 탭·트레이에서 켭니다. 레어에 지킴이 한 마리는 남깁니다.</li>
@@ -157,7 +156,7 @@ export function App() {
               <li><b>종족 고유 스킬</b> · 12종 × 4스킬. 조종 모드·방어전·전투 창에 스킬 모션과 이펙트, 바탕화면에서 가끔 생활 스킬 연출. 드래곤 상세에서 확인. '아군 필요' 12개는 전투 효과까지 적용(혼자 판본), 나머지는 연출만.</li>
               <li><b>단축키</b> · Ctrl+Alt+D 바탕화면 숨기기 · Ctrl+Alt+M 관리 창.</li>
             </ul>
-            <p className="fine">{init.edition === 'test' ? '본편 저장과 분리되어 있으니 마음껏 시험해 보세요. 자세한 내용은 압축 안의 테스트판_안내.txt에 있습니다.' : '기존 연대기를 그대로 이어 갑니다. 새 규칙은 설정 탭의 실험 규칙에서 끌 수 있습니다. 자세한 내용은 압축 안의 안내.txt에 있습니다.'}</p>
+            <p className="fine">기존 연대기를 그대로 이어 갑니다. 새 규칙은 설정 탭의 실험 규칙에서 끌 수 있습니다. 자세한 내용은 압축 안의 안내.txt에 있습니다.</p>
             <button className="primary" onClick={() => { setShowHelp(false); try { localStorage.setItem('bf-help-seen', '3'); } catch { /* 저장 안 돼도 괜찮음 */ } }}>시작하기</button>
           </div>
         </div>

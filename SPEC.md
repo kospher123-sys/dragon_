@@ -161,6 +161,5 @@ sh tools/pack.sh release   # Windows 포터블 폴더 (아이콘 교체 포함)
 
 ## 11. 본편 승격 (v1.5.0)
 - `src/main/main.ts`의 `FEATURES = true`: 성장·자동 사냥 UI, 실험 규칙 기본 켬, 트레이 사진·일괄 자동 사냥, 바탕화면 방어전이 본편에서도 동작. 렌더러는 `init.features`로 판단(예전 `init.edition === 'test'` 기능 분기).
-- 테스트판에만 남는 것: 저장 폴더 `흑염룡-테스트`, 'TEST' 배지, 자동 실행 끔, 본편 저장 복사·다시 복사.
-- 본편 빌드: `sh tools/pack.sh <out>` (BUILD 기본값 build). 테스트판: `BUILD=build:test sh tools/pack.sh <out>`.
+- 테스트판 빌드는 없앴다(2026-11-09). 본편 빌드: `sh tools/pack.sh <out>`.
 - 본편 첫 실행 시 `%APPDATA%\흑염룡\world.before-1.5.0.json` 보존.

@@ -17,7 +17,6 @@ const api: Api = {
   newChronicle: () => ipcRenderer.invoke('new-chronicle'),
   openBattle: () => ipcRenderer.invoke('open-battle'),
   quit: () => ipcRenderer.invoke('quit'),
-  reseed: () => ipcRenderer.invoke('reseed'),
   photo: () => ipcRenderer.invoke('photo'),
   onSnapshot: on('snapshot'),
   onSummary: on('summary'),

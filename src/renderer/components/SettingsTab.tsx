@@ -35,7 +35,7 @@ export function SettingsTab({ settings, setSettings, init, chronicle, state }: {
           <h3>바탕화면·실행</h3>
           <label className="check"><input type="checkbox" checked={settings.autoHide} onChange={(e) => patch({ autoHide: e.target.checked })} /> 전체화면 앱 실행 중 바탕화면 요소 숨기기</label>
           <label className="check"><input type="checkbox" checked={settings.hideFromCapture !== false} onChange={(e) => patch({ hideFromCapture: e.target.checked })} /> 스크린샷·화면 녹화에 바탕화면 드래곤 안 보이게 하기</label>
-          <label className="check"><input type="checkbox" disabled={init.edition === 'test'} checked={settings.autoStart && init.edition !== 'test'} onChange={(e) => patch({ autoStart: e.target.checked })} /> Windows 시작 시 자동 실행{init.edition === 'test' ? ' (테스트판에서는 꺼져 있습니다)' : ''}</label>
+          <label className="check"><input type="checkbox" checked={settings.autoStart} onChange={(e) => patch({ autoStart: e.target.checked })} /> Windows 시작 시 자동 실행</label>
           <label className="field">표시 모니터
             <select value={settings.monitor} onChange={(e) => patch({ monitor: Number(e.target.value) })}>
               {init.monitors.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
@@ -80,11 +80,6 @@ export function SettingsTab({ settings, setSettings, init, chronicle, state }: {
             <button className="danger" onClick={async () => { if (confirm(`${chronicle}번째 연대기를 보관하고 새 연대기를 시작할까요?`)) await api().newChronicle(); }}>새 연대기 시작</button>
             <button onClick={() => api().quit()}>저장하고 종료</button>
           </div>
-          {init.edition === 'test' && (
-            <div className="row">
-              <button onClick={async () => { if (confirm('지금 테스트 연대기를 보관하고, 본편 저장을 다시 복사해 시작할까요? (본편은 그대로)')) setMsg((await api().reseed()) ?? '본편 저장을 다시 복사했습니다.'); }}>본편에서 다시 복사해 시작</button>
-            </div>
-          )}
           <p className="fine">관리 창을 닫아도 게임은 트레이에서 계속 진행됩니다. 완전히 끄려면 ‘저장하고 종료’를 누르세요.</p>
         </section>
       </div>

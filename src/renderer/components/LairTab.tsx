@@ -7,8 +7,9 @@ import type { Settings } from '../../shared/types';
 import { api, dur, lairName, status, shownOnDesktop, stage } from '../util';
 import { Portrait } from './Portrait';
 
-export function LairTab({ state, settings, setSettings, selected, onSelect, focusLair, edition }: {
-  edition?: string;
+export function LairTab({ state, settings, setSettings, selected, onSelect, focusLair, full }: {
+  /** 예전 테스트판 기능(레어 소식·일괄 자동 사냥 등) 표시 */
+  full?: boolean;
   state: State; settings: Settings; setSettings: (s: Settings) => void; selected: string; onSelect: (id: string) => void; focusLair: number | null;
 }) {
   const [sort, setSort] = useState<'default' | 'level' | 'wins' | 'status'>('default');
@@ -46,7 +47,7 @@ export function LairTab({ state, settings, setSettings, selected, onSelect, focu
         </div>
         <span className="muted">살아 있는 드래곤 {alive.length}마리 · 바탕화면 표시 {shown}마리</span>
       </div>
-      {edition === 'test' && (() => {
+      {full && (() => {
         // 최근 게임 하루(실제 약 1시간) 동안의 레어 소식
         const recent = state.events.filter((e) => e.time > state.time - T.DAY);
         const n = (k: string) => recent.filter((e) => e.kind === k).length;
@@ -66,7 +67,7 @@ export function LairTab({ state, settings, setSettings, selected, onSelect, focu
           <button onClick={() => api().openBattle()}>전투 보기</button>
         </div>
       )}
-      {edition === 'test' && (
+      {full && (
         <div className="sort-row">
           <label className="field">정렬
             <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
@@ -94,7 +95,7 @@ export function LairTab({ state, settings, setSettings, selected, onSelect, focu
           ))}
           {!state.eggs.length && <p className="muted">둥지가 비어 있습니다. 성체가 알을 낳거나 다른 종족이 알을 맡깁니다.</p>}
         </div>
-        {edition === 'test' && (
+        {full && (
           <div className="decor-row">
             <span className="muted">둥지 장식 · 유물 {state.resources}</span>
             {DECOR.map(([id, name, cost, desc]) => (
@@ -115,7 +116,7 @@ export function LairTab({ state, settings, setSettings, selected, onSelect, focu
               <span className="group-actions">
                 <button className="link" onClick={() => setGroup(g.list.map((d) => d.id), true)}>모두 표시</button>
                 <button className="link" onClick={() => setGroup(g.list.map((d) => d.id), false)}>모두 끄기</button>
-                {g.i === 0 && edition === 'test' && (
+                {g.i === 0 && full && (
                   <>
                     <button className="link" onClick={() => setAutoAll(g.list, -1)}>모두 자동 사냥</button>
                     <button className="link" onClick={() => setAutoAll(g.list, null)}>자동 사냥 끄기</button>

@@ -1,7 +1,7 @@
 # 흑염룡 야간 개발 기록 (테스트판)
 
 원칙: 본편(1.1.0/1.2.0)·본편 세이브(%APPDATA%\흑염룡)는 건드리지 않는다. 테스트판(EDITION=test)에만 넣고 `흑염룡-테스트판-최신-Windows.zip`으로 배포.
-빌드: `BUILD=build:test sh tools/pack.sh <out>` · 확인: `npx tsc --noEmit -p .`, `npx vitest run`, xvfb 스모크(scratchpad/smoke13.cjs)
+빌드: `sh tools/pack.sh <out>` (1.5.0부터 본편 하나) · 확인: `npx tsc --noEmit -p .`, `npx vitest run`, xvfb 스모크(scratchpad/smoke13.cjs)
 
 ## 완료
 - v1.3.0: 수련·각성·칭호, 자동 사냥, 인간 방문 4종 + 바탕화면 인간 연출, 본편 세이브 복사 시작, 자동 실행 분리
@@ -46,6 +46,8 @@
 - v1.5.0 본편 승격 (2026-11-09, 사용자 요청): 테스트판 기능을 본편(stable) 기본으로 켬(`FEATURES`, init.features). 본편과 테스트판의 차이는 저장 폴더·이름·자동 실행·'본편에서 복사'뿐
   - 본편 첫 실행 때 기존 저장을 `world.before-1.5.0.json`으로 한 번 남김. 본편 압축에는 GUIDE.txt → 안내.txt
   - GitHub Actions(.github/workflows/windows-build.yml): main·ci/* push마다 본편·테스트판 Windows 빌드 아티팩트
+
+- 테스트판 빌드 제거 (2026-11-09, 사용자 요청): EDITION·build:test·TEST_GUIDE.txt·'본편에서 복사'·테스트 배지 삭제. 본편 하나만 빌드한다. 예전 테스트판 저장(%APPDATA%\흑염룡-테스트)은 읽지 않는다
 
 ## 다음 후보
 개연성

@@ -206,7 +206,7 @@ export function startDesktop(h: Host & { log?: (msg: string) => void }) {
   ipcMain.handle('desk:init', () => model());
   ipcMain.handle('desk:pet', (_e, id: string) => host.act({ type: 'pet', id: String(id) }));
   ipcMain.handle('desk:bounty', () => host.act({ type: 'bounty' }));
-  ipcMain.handle('desk:defend', () => (host.test ? host.act({ type: 'defend' }) : '테스트판 기능입니다'));
+  ipcMain.handle('desk:defend', () => (host.test ? host.act({ type: 'defend' }) : '지금은 쓸 수 없는 기능입니다'));
   // 오버레이가 알려 주는 "클릭을 받아야 하는 영역" (창 좌표, DIP)
   ipcMain.on('desk:regions', (_e, r: Rect[]) => { regions = Array.isArray(r) ? r : []; });
   ipcMain.on('desk:open-manager', () => host.openManager());
