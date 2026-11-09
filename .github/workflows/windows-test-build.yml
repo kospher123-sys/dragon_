@@ -1,0 +1,26 @@
+# Windows 테스트판 빌드: main 또는 ci/* 브랜치에 push하거나 Actions 탭에서 직접 실행하면
+# 'Blackflame-test-win64' 아티팩트(ZIP)가 만들어진다. Actions → 실행 기록 → Artifacts에서 내려받는다.
+name: Windows 테스트판 빌드
+on:
+  push:
+    branches: [main, 'ci/**']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx tsc --noEmit -p .
+      - run: npx vitest run
+      - run: BUILD=build:test sh tools/pack.sh release
+      - run: cp TEST_GUIDE.txt "release/Blackflame-win32-x64/테스트판_안내.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Blackflame-test-win64-v${{ github.run_number }}
+          path: release/Blackflame-win32-x64
+          retention-days: 30
