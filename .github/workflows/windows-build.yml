@@ -1,5 +1,7 @@
-# Windows 빌드: main 또는 ci/* 브랜치에 push하거나 Actions 탭에서 직접 실행하면
-# 'Blackflame-win64-v번호' 아티팩트(ZIP)가 만들어진다. Actions → 실행 기록 → Artifacts에서 내려받는다(30일 보관).
+# Windows 빌드: main 또는 ci/* 브랜치에 push하거나 Actions 탭에서 직접 실행하면 아티팩트 두 개가 만들어진다.
+#   Blackflame-win64-v번호  : 전체 빌드(처음 설치용, Electron 포함)
+#   Blackflame-update-v번호 : 업데이트 팩(resources/app.asar 만, 이미 설치한 PC용)
+# Actions → 실행 기록 → Artifacts에서 내려받는다(30일 보관).
 name: Windows 빌드
 on:
   push:
@@ -14,13 +16,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --ignore-scripts
+      - run: npm ci
       - run: npx tsc --noEmit -p .
       - run: npx vitest run
       - run: sh tools/pack.sh release
-      - run: cp GUIDE.txt "release/Blackflame-win32-x64/안내.txt"
+      - name: 안내 파일과 업데이트 팩
+        run: |
+          cp GUIDE.txt "release/Blackflame-win32-x64/안내.txt"
+          mkdir -p update/resources
+          cp release/Blackflame-win32-x64/resources/app.asar update/resources/
+          cp UPDATE_GUIDE.txt "update/업데이트_안내.txt"
+          du -sh release/Blackflame-win32-x64 update
       - uses: actions/upload-artifact@v4
         with:
           name: Blackflame-win64-v${{ github.run_number }}
           path: release/Blackflame-win32-x64
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Blackflame-update-v${{ github.run_number }}
+          path: update
           retention-days: 30

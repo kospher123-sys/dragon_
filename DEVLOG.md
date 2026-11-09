@@ -49,6 +49,9 @@
 
 - 테스트판 빌드 제거 (2026-11-09, 사용자 요청): EDITION·build:test·TEST_GUIDE.txt·'본편에서 복사'·테스트 배지 삭제. 본편 하나만 빌드한다. 예전 테스트판 저장(%APPDATA%\흑염룡-테스트)은 읽지 않는다
 
+- 배포 용량 줄이기 (2026-11-09): 빌드 때 그림 PNG→WebP(품질 90, `tools/webp.mjs`, sharp) 46.9MB → 14.5MB. bf:// 프로토콜이 .png 요청에 같은 이름 .webp 를 준다(사용자 교체 PNG 우선, app-icon 은 PNG 유지)
+  - Actions 아티팩트 둘: 전체 빌드(Blackflame-win64) + 업데이트 팩(Blackflame-update, resources/app.asar + 업데이트_안내.txt)
+
 ## 다음 후보
 개연성
 편의성
