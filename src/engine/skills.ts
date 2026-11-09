@@ -4,10 +4,13 @@
 // 이번 단계(스킬 이미지 적용판)에서 구현한 것
 //   - 이름·분류·설명, 바탕화면 조종 모드/방어전 시전 연출, 생활 스킬 바탕화면 연출, 전투 창 연출, 관리 창 표시
 //   - 전투에서 공격 범위(전체/단일)만 스킬별로 다르다. 피해 계산은 기존 공통 스킬과 같다.
-// 아직 구현하지 않은 것: 스킬별 고유 효과(버프·보호막·스택·조건 발동·커서 판정 등). implemented 가 false 인 이유.
+// v1.5.0: '아군 필요' 12개의 혼자 판본 효과 구현(skillfx.ts) → implemented true, solo 에 설명.
+// 아직 구현하지 않은 것: 나머지 36개의 고유 효과(버프·보호막·스택·조건 발동·커서 판정 등), 12개의 아군 판본.
 //
 // 그림: public/img/sk-motion-NN.png (3열 준비·발동·회수 × 4행 슬롯), sk-NN-MM.png (정리본 번호 MM 이펙트)
 //       tools/build_skill_assets.py 로 만든다.
+
+import { isSoloSkill, SOLO_DESC } from './skillfx';
 
 export const SLOTS = ['공격', '방어', '생활', '궁극기'] as const;
 export type Slot = 0 | 1 | 2 | 3;
@@ -58,6 +61,8 @@ export interface SkillDef {
   fx: Fx[];
   /** 고유 효과까지 구현됐는지 */
   implemented: boolean;
+  /** 혼자 싸울 때의 대체 효과 ('아군 필요' 12개만) */
+  solo?: string;
 }
 
 const im = (sp: number, n: number) => `sk-${String(sp).padStart(2, '0')}-${String(n).padStart(2, '0')}`;
@@ -210,7 +215,11 @@ const DATA: Row[][] = [
 ];
 
 export const SPECIES_SKILLS: SkillDef[][] = DATA.map((rows, species) =>
-  rows.map(([name, kind, desk, desc, area, fx], slot) => ({ species, slot: slot as Slot, name, kind, desk, desc, area, fx, implemented: false })),
+  rows.map(([name, kind, desk, desc, area, fx], slot) => ({
+    species, slot: slot as Slot, name, kind, desk, desc, area, fx,
+    implemented: isSoloSkill(name),
+    solo: isSoloSkill(name) ? SOLO_DESC[name] : undefined,
+  })),
 );
 
 export const skillsOf = (species: number): SkillDef[] => SPECIES_SKILLS[species] ?? SPECIES_SKILLS[0];

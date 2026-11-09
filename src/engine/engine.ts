@@ -1,5 +1,6 @@
 // 게임 엔진: 웹 버전 규칙을 실시간 방치형에 맞게 옮긴 순수 로직. 화면·파일 접근 없음.
 import { skillsOf, findSkill } from './skills';
+import { SOLO, soloTurnStart, soloResolve, soloAttack, soloIncoming, soloAfterHit, type SoloState } from './skillfx';
 import {
   T, RATE, TIME_SCALE, SPECIES, GRADES, GRADE_MULT, REGIONS, START_TOWNS, NEW_TOWNS, ROLES,
 } from './data';
@@ -193,7 +194,8 @@ export interface Battle {
   /** 다음 명령을 내릴 수 있는 전투 시각 */
   orderReady?: number;
   /** 바탕화면 방어전에서 막아 낸 침입자 수 */
-  defended?: number;
+  defended?: number;  /** 종족 고유 스킬 '아군 필요' 12개의 혼자 판본 상태 (skillfx.ts) */
+  solo?: SoloState;
 }
 
 /** 바탕화면 방어전: 습격 중 작업표시줄 위 침입자를 쫓아낼 때마다 적 전력을 깎는다 */
@@ -623,7 +625,7 @@ function resolveSupport(s: State, accept: boolean, ctx: Ctx | null, timedOut: bo
 
 // ---------------------------------------------------------------- 전투
 
-function startBattle(s: State, ctx: Ctx, d: Dragon, force: number, place: string, kind: BattleKind = 'monster', target = 0) {
+export function startBattle(s: State, ctx: Ctx, d: Dragon, force: number, place: string, kind: BattleKind = 'monster', target = 0) {
   const count = Math.round(force);
   const roles = kind === 'duel' ? ['용사'] : ['용사', ...ROLES.slice(1).filter(() => rand(s) > 0.25)];
   s.battle = {
@@ -780,7 +782,8 @@ function enemyTurn(s: State, d: Dragon, b: Battle, dt: number) {
     const exposed = b.dc > 2.5;
     const crit = rand(s) < (exposed ? 0.25 : 0.04);
     const guard = b.order?.type === 'guard' && b.order.until > b.t;
-    const dmg = ((b.force * 0.04) / b.units.length) * crown * (crit ? 3.5 : 1) * (u.role === '용사' ? 1.6 : 1) * (guard ? 0.5 : 1);
+    let dmg = ((b.force * 0.04) / b.units.length) * crown * (crit ? 3.5 : 1) * (u.role === '용사' ? 1.6 : 1) * (guard ? 0.5 : 1);
+    if (rule(s, 'skills') && SOLO.on) dmg = soloIncoming(b, d, dmg, crit || u.role === '용사', () => rand(s));
     if (helpers.length) {
       // 피해를 나눠 받는다: 수호자 몫이 줄고, 나머지는 함께 싸우는 성체에게 (쓰러지지는 않음)
       const share = dmg / (1 + 0.5 * helpers.length);
@@ -788,12 +791,16 @@ function enemyTurn(s: State, d: Dragon, b: Battle, dt: number) {
       const h = helpers[Math.floor(rand(s) * helpers.length)];
       h.hp = Math.max(h.max * 0.2, h.hp - (dmg - share));
     } else d.hp -= dmg;
+    if (rule(s, 'skills') && SOLO.on) {
+      if (dmg <= 0) continue;
+      soloAfterHit(b, d);
+    }
     b.log.unshift((b.kind === 'monster' ? '몬스터' : u.role) + (crit ? ' · 노출된 약점 강타' : ' · 공격') + ' −' + Math.round(dmg));
   }
 }
 
 /** 전투는 실제 초 단위로 진행한다 (시간 배율 없음). */
-function battleStep(s: State, ctx: Ctx, dt: number) {
+export function battleStep(s: State, ctx: Ctx, dt: number) {
   const b = s.battle!;
   const d = s.dragons.find((x) => x.id === b.dragon)!;
   b.t += dt;
@@ -801,15 +808,27 @@ function battleStep(s: State, ctx: Ctx, dt: number) {
   b.hc -= dt;
   if (b.dc <= 0) {
     b.dc = 2 + rand(s) * 2;
+    const solo = rule(s, 'skills') && SOLO.on;
+    const pause = solo ? soloTurnStart(b, d, () => rand(s)) : { skip: false };
+    if (pause.skip) {
+      // 용암 동굴 속·맞불 대가: 이번 행동은 공격하지 않는다 (모션도 다시 틀지 않도록 phase 유지)
+      b.hp = b.units.reduce((a, u) => a + Math.max(0, u.hp), 0);
+      b.skill = pause.label ?? '숨 고르기';
+    } else {
     const crit = rand(s) < 0.18;
-    const skill = SKILLS(d, s)[Math.floor(rand(s) * 4)];
+    let skill = SKILLS(d, s)[Math.floor(rand(s) * 4)];
+    if (solo) skill = soloResolve(b, d, skill);
     const helpers = defenders(s, d);
     const ord = b.order && b.order.until > b.t ? b.order.type : null;
     const dmg = d.power * (isAdult(d) ? 1 : 0.4) * (1 - Math.min(0.4, d.injury * 0.04)) * (1 + rand(s)) * (crit ? 3 : 1) * (1 + 0.35 * helpers.length)
       * (ord === 'focus' ? 1.6 : ord === 'guard' ? 0.6 : 1);
     const alive = b.units.filter((u) => u.hp > 0);
     const before = alive.length;
-    if (ord === 'focus') {
+    let extra = '', shown = dmg;
+    if (solo) {
+      const r = soloAttack(b, d, skill, dmg, crit, isAreaSkill(s, d, skill), ord === 'focus', () => rand(s));
+      extra = r.note; shown = r.dmg;
+    } else if (ord === 'focus') {
       // 집중 공격: 가장 약한 적 하나를 노린다
       const u = [...alive].sort((x, y) => x.hp - y.hp)[0];
       if (u) u.hp = Math.max(0, u.hp - dmg);
@@ -827,7 +846,8 @@ function battleStep(s: State, ctx: Ctx, dt: number) {
     }
     b.skill = skill + (crit ? ' · 약점 관통!' : '');
     b.phase++;
-    b.log.unshift(`${d.name} ${b.skill} −${Math.round(dmg)}`);
+    b.log.unshift(`${d.name} ${b.skill} −${Math.round(shown)}${extra ? ' · ' + extra : ''}`);
+    }
   }
   enemyTurn(s, d, b, dt);
   b.log = b.log.slice(0, 6);

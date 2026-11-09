@@ -5,6 +5,7 @@ import { REGIONS, ROLES } from '../../engine/data';
 import { api } from '../util';
 import { speciesRow } from '../sprites';
 import { findSkill, fxVisible, type SkillDef } from '../../engine/skills';
+import { soloStatus } from '../../engine/skillfx';
 
 const NAMES = ['castle', 'sheet', 'party-motion', 'fx', 'map', 'species', 'monsters', 'village'] as const;
 type Imgs = Record<(typeof NAMES)[number], HTMLImageElement>;
@@ -144,6 +145,7 @@ export function BattlePanel({ state, paused }: { state: State; paused: boolean }
       <p>{d.name} · HP {Math.max(0, Math.round(d.hp))}/{d.max}</p>
       <progress value={Math.max(0, d.hp)} max={d.max} />
       <BattleCanvas state={state} paused={paused} />
+      {soloStatus(b).length > 0 && <div className="row">{soloStatus(b).map((t) => <span key={t} className="pill">{t}</span>)}</div>}
       {b.morale !== undefined && (() => {
         const wait = Math.max(0, (b.orderReady ?? 0) - b.t);
         const active = b.order && b.order.until > b.t ? COMMANDS.find(([k]) => k === b.order!.type)?.[1] : null;
