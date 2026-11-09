@@ -55,8 +55,8 @@ export interface InitData extends Snapshot {
   savePath: string;
   monitors: { id: number; label: string }[];
   archives: { file: string; title: string }[];
-  edition?: 'stable' | 'test';
-  /** 1.5.0부터 테스트판 기능(성장·자동 사냥·실험 규칙·고유 스킬 등)을 본편에서도 켠다 */
+  edition?: 'stable';
+  /** 성장·자동 사냥·실험 규칙·고유 스킬 등 (1.5.0부터 늘 true) */
   features?: boolean;
 }
 
@@ -126,9 +126,7 @@ export interface Api {
   newChronicle(): Promise<void>;
   openBattle(): Promise<void>;
   quit(): Promise<void>;
-  /** 테스트판: 본편 저장을 다시 복사해 처음부터 (지금 테스트 연대기는 보관) */
-  reseed(): Promise<string | null>;
-  /** 테스트판: 바탕화면 드래곤 사진 (사진\흑염룡 폴더) */
+  /** 바탕화면 드래곤 사진 (사진\흑염룡 폴더) */
   photo(): Promise<string | null>;
   onSnapshot(cb: (s: Snapshot) => void): () => void;
   onSummary(cb: (s: Summary) => void): () => void;

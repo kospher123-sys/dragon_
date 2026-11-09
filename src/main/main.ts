@@ -13,15 +13,13 @@ import {
 import { CATCHUP_MAX, SUMMARY_MIN } from '../engine/data';
 import { DEFAULT_SETTINGS, type Settings, type Snapshot, type InitData, type NotifyKey } from '../shared/types';
 
-/** 빌드 때 정해진다: 'stable' 또는 'test' (테스트판은 저장 폴더·자동 실행이 본편과 분리된다) */
-declare const EDITION: string;
-const TEST = typeof EDITION !== 'undefined' && EDITION === 'test';
-const APP_NAME = TEST ? '흑염룡-테스트' : '흑염룡';
-/** 1.5.0: 테스트판 기능을 본편 기본으로 승격. 테스트판과 다른 점은 저장 폴더·이름·자동 실행·본편 복사뿐 */
+// 1.5.0: 테스트판을 본편으로 합치고 테스트판 빌드를 없앴다. 예전 테스트판 저장(%APPDATA%\흑염룡-테스트)은 읽지 않는다.
+const APP_NAME = '흑염룡';
+/** 성장·자동 사냥·실험 규칙·고유 스킬 등 예전 테스트판 기능 (1.5.0부터 늘 켬) */
 const FEATURES = true;
 
 app.setName(APP_NAME);
-app.setAppUserModelId(TEST ? 'com.blackflame.desktop.test' : 'com.blackflame.desktop');
+app.setAppUserModelId('com.blackflame.desktop');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'bf', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
@@ -30,8 +28,6 @@ protocol.registerSchemesAsPrivileged([
 // ------------------------------------------------------------------ 경로 (단일 실행 잠금보다 먼저)
 if (process.env.BLACKFLAME_DATA) app.setPath('userData', process.env.BLACKFLAME_DATA);
 else app.setPath('userData', path.join(app.getPath('appData'), APP_NAME));
-/** 본편 저장 폴더 (테스트판이 처음 켜질 때 복사해 온다) */
-const MAIN_DIR = path.join(app.getPath('appData'), '흑염룡');
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -142,30 +138,13 @@ function applyGap(ms: number) {
   }
 }
 
-/** 테스트판 첫 실행: 본편 저장(world.json)을 복사해 같은 드래곤들로 시작한다. 본편 파일은 건드리지 않는다. */
-function seedFromMain() {
-  if (!TEST || process.env.BLACKFLAME_DATA || fs.existsSync(WORLD)) return;
-  try {
-    const src = path.join(MAIN_DIR, 'world.json');
-    if (!fs.existsSync(src)) return;
-    fs.mkdirSync(dir, { recursive: true });
-    fs.copyFileSync(src, WORLD);
-    const st = readJson<Partial<Settings>>(path.join(MAIN_DIR, 'settings.json'));
-    if (st && !fs.existsSync(SETTINGS)) writeAtomic(SETTINGS, { ...st, autoStart: false });
-    copiedFromMain = true;
-  } catch { /* 복사 실패면 새 연대기로 시작 */ }
-}
-let copiedFromMain = false;
-
 /** 1.5.0 본편 첫 실행: 예전 버전 저장을 한 번만 따로 남겨 둔다 (되돌리고 싶을 때 이 파일을 world.json으로) */
 function keepPre15() {
-  if (TEST) return;
   const keep = path.join(dir, 'world.before-1.5.0.json');
   try { if (fs.existsSync(WORLD) && !fs.existsSync(keep)) fs.copyFileSync(WORLD, keep); } catch { /* 복사 실패해도 진행 */ }
 }
 
 function loadWorld() {
-  seedFromMain();
   keepPre15();
   const file = readJson<SaveFile>(WORLD) ?? readJson<SaveFile>(BACKUP);
   if (file && file.format === 'blackflame-desktop-save') {
@@ -176,7 +155,6 @@ function loadWorld() {
       paused = !!file.paused;
       savedAt = file.savedAt;
       applyGap(Date.now() - file.savedAt);
-      if (copiedFromMain) log(state, null, '테스트판: 본편의 연대기를 복사해 이어서 시작했다. 본편 저장은 그대로다.');
       return;
     } catch (e) {
       saveError = `저장 파일을 읽지 못해 새로 시작했습니다. 기존 파일은 ${WORLD} 에 남아 있습니다. (${(e as Error).message})`;
@@ -286,7 +264,7 @@ function createManager() {
     height: 800,
     minWidth: 980,
     minHeight: 640,
-    title: TEST ? '흑염룡 둥지 관리 · 테스트판' : '흑염룡 둥지 관리',
+    title: '흑염룡 둥지 관리',
     backgroundColor: '#14121c',
     icon: path.join(IMG, 'app-icon.png'),
     show: false,
@@ -347,7 +325,7 @@ function trayStatus() {
   if (away) parts.push(`출격 ${away}`);
   if (state.battle) parts.push('⚔ 레어 습격 중');
   if (state.prompt) parts.push('지원 요청 대기');
-  return `흑염룡${TEST ? ' 테스트판' : ''}${paused ? ' · 일시정지' : ''}\n${parts.join(' · ')}`;
+  return `흑염룡${paused ? ' · 일시정지' : ''}\n${parts.join(' · ')}`;
 }
 
 let lastTip = '';
@@ -470,7 +448,7 @@ function registerIpc() {
       savePath: WORLD,
       monitors: screen.getAllDisplays().map((d, i) => ({ id: i, label: `${i + 1}번 모니터 (${d.size.width}×${d.size.height})${d.id === screen.getPrimaryDisplay().id ? ' · 주 모니터' : ''}` })),
       archives: listArchives(),
-      edition: TEST ? 'test' : 'stable',
+      edition: 'stable',
       features: FEATURES,
     };
   });
@@ -489,8 +467,7 @@ function registerIpc() {
   ipcMain.handle('pause', (_e, p: boolean) => setPaused(p));
   ipcMain.handle('settings', (_e, patch: Partial<Settings>) => {
     settings = { ...settings, ...patch, notify: { ...settings.notify, ...(patch.notify || {}) } };
-    if (TEST) settings.autoStart = false; // 테스트판은 자동 실행을 쓰지 않는다
-    else if (patch.autoStart !== undefined && process.platform === 'win32') {
+    if (patch.autoStart !== undefined && process.platform === 'win32') {
       app.setLoginItemSettings({ openAtLogin: settings.autoStart, path: process.execPath });
     }
     saveSettings();
@@ -551,18 +528,6 @@ function registerIpc() {
   ipcMain.handle('open-battle', () => openBattle());
   ipcMain.handle('quit', () => quit());
   ipcMain.handle('photo', () => takePhoto());
-  ipcMain.handle('reseed', () => {
-    if (!TEST) return '테스트판에서만 쓸 수 있습니다.';
-    if (!fs.existsSync(path.join(MAIN_DIR, 'world.json'))) return '본편 저장 파일을 찾지 못했습니다.';
-    archiveCurrent();
-    for (const f of [WORLD, BACKUP]) { try { fs.unlinkSync(f); } catch { /* 없음 */ } }
-    copiedFromMain = false;
-    loadWorld();
-    last = Date.now();
-    save();
-    broadcast();
-    return null;
-  });
 }
 
 // ------------------------------------------------------------------ 시작
@@ -593,8 +558,7 @@ app.whenReady().then(() => {
   prepareOverrideFolder();
   // 자동 실행이 켜져 있으면 지금 실행 중인 exe 경로로 다시 등록한다
   // (예전 버전 폴더에서 켜 둔 설정이 예전 exe를 계속 실행하는 문제 방지)
-  if (TEST) settings.autoStart = false;
-  else if (settings.autoStart && process.platform === 'win32' && app.isPackaged) {
+  if (settings.autoStart && process.platform === 'win32' && app.isPackaged) {
     app.setLoginItemSettings({ openAtLogin: true, path: process.execPath });
   }
   createManager();
