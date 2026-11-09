@@ -102,6 +102,10 @@ export interface DesktopApi {
   onNotice(cb: (n: { dragon: string; text: string }) => void): () => void;
   onVisible(cb: (v: boolean) => void): () => void;
   onCursor(cb: (p: { x: number; y: number }) => void): () => void;
+  /** 흑염 낙인: 조종 모드로 쫓아낸 몬스터 종류 */
+  brand(name: string): Promise<string | null>;
+  /** 생활 스킬 보상 (판정은 바탕화면에서). 성공이면 null */
+  life(key: import('../engine/life').LifeKey, id?: string, n?: number, miss?: boolean): Promise<string | null>;
   alive(): void;
   onRecheck(cb: () => void): () => void;
   onHuman(cb: (h: HumanEvent) => void): () => void;

@@ -1,6 +1,7 @@
 // 게임 엔진: 웹 버전 규칙을 실시간 방치형에 맞게 옮긴 순수 로직. 화면·파일 접근 없음.
 import { skillsOf, findSkill } from './skills';
-import { SOLO, soloTurnStart, soloResolve, soloAttack, soloIncoming, soloAfterHit, type SoloState } from './skillfx';
+import { lifeReward, lifeMiss, type LifeKey, type LifeState } from './life';
+import { FX, fxOf, fxTurnStart, fxPick, fxAttack, fxEnemyAct, fxIncoming, fxAfterHit, envOf, type FxState } from './skillfx';
 import {
   T, RATE, TIME_SCALE, SPECIES, GRADES, GRADE_MULT, REGIONS, START_TOWNS, NEW_TOWNS, ROLES,
 } from './data';
@@ -66,6 +67,8 @@ export interface Dragon {
   petAt?: number;
   /** 마지막 전투 (바탕화면 귀환 대사용) */
   last?: { place: string; won: boolean };
+  /** 레드 '열 관성': 쌓인 열과 마지막으로 잰 게임 시각 */
+  heat?: { n: number; t: number };
 }
 
 export type RuleKey = 'defense' | 'depletion' | 'parallel' | 'tactics' | 'skills';
@@ -74,7 +77,7 @@ export const RULES: [RuleKey, string, string][] = [
   ['depletion', '사냥터 고갈', '같은 사냥터에서 이길수록 유물이 줄고(−25%씩, 최소 15%) 1시간에 걸쳐 회복된다. 알아서 사냥은 풍요로운 곳을 고른다'],
   ['tactics', '전술 전투', '적에게 사기가 생겨 동료가 쓰러지거나 포효를 들으면 꺾이고, 0이 되면 달아난다(인간이 더 쉽게 무너짐). 전투 창에서 8초마다 지휘 명령(집중 공격·방어 자세·위압의 포효·후퇴)을 내릴 수 있다'],
   ['parallel', '동시 사냥', '다른 전투가 진행 중이어도 사냥터에 도착한 드래곤은 기다리지 않고 바로 싸운다(전투 화면 없이 결과만)'],
-  ['skills', '종족 고유 스킬', '공통 스킬 대신 종족마다 고유 스킬(공격·방어·궁극기 + 파멸의 발톱)을 쓰고, 바탕화면·전투 창에 스킬 모션과 이펙트가 나온다. 생활 스킬은 바탕화면에서 가끔 연출된다. 지금은 이름·연출·공격 범위만 다르고 고유 효과는 아직 없다'],
+  ['skills', '종족 고유 스킬', '공통 스킬 대신 종족마다 고유 스킬(공격·방어·궁극기 + 파멸의 발톱)을 쓰고, 바탕화면·전투 창에 스킬 모션과 이펙트가 나온다. 전투 스킬은 조건·쿨다운에 따라 자동으로 고르고(궁극기 > 방어 > 공격), 적도 역할별 공격력·버프·큰 공격 예고를 쓴다. 생활 스킬은 바탕화면에서 커서를 올려 반응하는 작은 놀이로 나온다'],
 ];
 export const rule = (s: State, k: RuleKey) => !!s.rules?.[k];
 export const regionYield = (s: State, i: number) => s.yields?.[i] ?? 1;
@@ -194,8 +197,11 @@ export interface Battle {
   /** 다음 명령을 내릴 수 있는 전투 시각 */
   orderReady?: number;
   /** 바탕화면 방어전에서 막아 낸 침입자 수 */
-  defended?: number;  /** 종족 고유 스킬 '아군 필요' 12개의 혼자 판본 상태 (skillfx.ts) */
-  solo?: SoloState;
+  defended?: number;
+  /** 종족 고유 전투 스킬 효과 상태 (skillfx.ts, v1.6) */
+  fx?: FxState;
+  /** 마지막 드래곤 행동의 기본 피해 (다음 턴에 터지는 효과용) */
+  fxBase?: number;
 }
 
 /** 바탕화면 방어전: 습격 중 작업표시줄 위 침입자를 쫓아낼 때마다 적 전력을 깎는다 */
@@ -261,6 +267,12 @@ export interface State {
   nemesis?: { name: string; level: number; defeats: number; wins: number };
   /** 바탕화면 몬스터 퇴치 보상: 게임 하루 단위 횟수 */
   bounty?: { day: number; count: number };
+  /** 흑염룡 '흑염 낙인': 낙인 찍힌 적 이름 (최대 6) */
+  brands?: string[];
+  /** 에메랄드 '덩굴 울타리'를 마지막으로 세운 게임 시각 */
+  vineAt?: number;
+  /** 생활 스킬 보상 기록 (life.ts) */
+  life?: LifeState;
   over: boolean;
   chronicle: number;
 }
@@ -387,7 +399,9 @@ export type Action =
   | { type: 'bounty' }
   | { type: 'rule'; key: RuleKey; on: boolean }
   | { type: 'command'; order: Command }
-  | { type: 'defend' };
+  | { type: 'defend' }
+  | { type: 'life'; key: LifeKey; id?: string; n?: number; miss?: boolean }
+  | { type: 'brand'; name: string };
 
 /** 수련·각성은 내 레어에서 쉬고 있을 때만 */
 function atLair(s: State, d: Dragon | undefined): string | null {
@@ -547,6 +561,20 @@ export function act(s: State, a: Action, ctx: Ctx | null = null): string | null 
     s.resources += 1;
     return null;
   }
+  if (a.type === 'brand') {
+    // 흑염룡 '흑염 낙인': 바탕화면 조종 모드로 쫓아낸 몬스터 종류에 낙인 (사냥터 몬스터 이름만)
+    if (!rule(s, 'skills')) return '종족 고유 스킬 규칙이 꺼져 있습니다';
+    if (!REGIONS.some((r) => r.monsters.includes(a.name))) return '알 수 없는 몬스터';
+    const list = (s.brands ??= []);
+    if (!list.includes(a.name)) { list.unshift(a.name); s.brands = list.slice(0, 6); }
+    return null;
+  }
+  if (a.type === 'life') {
+    // 생활 스킬 (바탕화면 판정 뒤): 실험 규칙 '종족 고유 스킬'이 켜져 있을 때만
+    if (!rule(s, 'skills')) return '종족 고유 스킬 규칙이 꺼져 있습니다';
+    if (a.miss) { lifeMiss(s, a.key); return null; }
+    return lifeReward(s, a.key, a.id, Number(a.n) || 0);
+  }
   if (a.type === 'pet') {
     const d = s.dragons.find((x) => x.id === a.id);
     if (!d || d.dead || d.mission) return '쓰다듬을 수 없습니다';
@@ -647,6 +675,8 @@ export function startBattle(s: State, ctx: Ctx, d: Dragon, force: number, place:
     phase: 0,
     morale: rule(s, 'tactics') ? 100 : undefined,
   };
+  // 생활 스킬 정밀 봉합: 다음 전투 첫 피격 −15%
+  if (rule(s, 'skills') && s.life?.guard === d.id) { fxOf(s.battle).guard = true; s.life.guard = undefined; }
   log(s, ctx, `${place}에서 교전 발생 · 적 ${count.toLocaleString()} 전력.`, kind === 'raid' ? 'raid' : 'info', d.id);
 }
 
@@ -716,6 +746,13 @@ function endBattle(s: State, ctx: Ctx, won: boolean, retreat = false) {
         s.resources += Math.round((30 + 5 * (REGIONS[b.target]?.risk ?? 1)) * y);
         (s.yields ??= REGIONS.map(() => 1))[b.target] = Math.max(0.15, y - 0.25);
       } else s.resources += 5 * (REGIONS[b.target]?.risk ?? 1);
+      // 생활 스킬 8자 춤·사금 일기: 다음 사냥 승리 유물 보너스
+      if (s.life?.loot) {
+        const extra = Math.round((30 + 5 * (REGIONS[b.target]?.risk ?? 1)) * s.life.loot);
+        s.resources += extra;
+        log(s, ctx, `사냥 보너스 +${Math.round(s.life.loot * 100)}% · 유물 +${extra}`, 'info', d.id);
+        s.life.loot = 0;
+      }
     }
     if (d.hp > 0) {
       const before = titleOf(d);
@@ -779,11 +816,16 @@ function enemyTurn(s: State, d: Dragon, b: Battle, dt: number) {
       b.log.unshift('치유사가 전열을 회복했다.');
       continue;
     }
+    const fx = rule(s, 'skills') && FX.on;
+    // 종족 고유 스킬: 적도 역할별 공격력·버프·큰 공격 예고·범위 공격을 쓴다 (skillfx.ts)
+    const move = fx ? fxEnemyAct(b, b.units.indexOf(u), () => rand(s)) : null;
+    if (move && !move.act) { if (move.cd !== undefined) u.cd = move.cd; continue; }
     const exposed = b.dc > 2.5;
     const crit = rand(s) < (exposed ? 0.25 : 0.04);
     const guard = b.order?.type === 'guard' && b.order.until > b.t;
-    let dmg = ((b.force * 0.04) / b.units.length) * crown * (crit ? 3.5 : 1) * (u.role === '용사' ? 1.6 : 1) * (guard ? 0.5 : 1);
-    if (rule(s, 'skills') && SOLO.on) dmg = soloIncoming(b, d, dmg, crit || u.role === '용사', () => rand(s));
+    const roleMul = move ? move.mul : u.role === '용사' ? 1.6 : 1;
+    let dmg = ((b.force * 0.04) / b.units.length) * crown * (crit ? 3.5 : 1) * roleMul * (guard ? 0.5 : 1);
+    if (move) dmg = fxIncoming(b, d, dmg, crit || move.big, () => rand(s), move.area, b.units.indexOf(u));
     if (helpers.length) {
       // 피해를 나눠 받는다: 수호자 몫이 줄고, 나머지는 함께 싸우는 성체에게 (쓰러지지는 않음)
       const share = dmg / (1 + 0.5 * helpers.length);
@@ -791,11 +833,11 @@ function enemyTurn(s: State, d: Dragon, b: Battle, dt: number) {
       const h = helpers[Math.floor(rand(s) * helpers.length)];
       h.hp = Math.max(h.max * 0.2, h.hp - (dmg - share));
     } else d.hp -= dmg;
-    if (rule(s, 'skills') && SOLO.on) {
+    if (move) {
       if (dmg <= 0) continue;
-      soloAfterHit(b, d);
+      fxAfterHit(b, d);
     }
-    b.log.unshift((b.kind === 'monster' ? '몬스터' : u.role) + (crit ? ' · 노출된 약점 강타' : ' · 공격') + ' −' + Math.round(dmg));
+    b.log.unshift((b.kind === 'monster' ? '몬스터' : u.role) + (move?.big ? ' · 큰 공격' : crit ? ' · 노출된 약점 강타' : move?.area ? ' · 범위 공격' : ' · 공격') + ' −' + Math.round(dmg));
   }
 }
 
@@ -808,16 +850,17 @@ export function battleStep(s: State, ctx: Ctx, dt: number) {
   b.hc -= dt;
   if (b.dc <= 0) {
     b.dc = 2 + rand(s) * 2;
-    const solo = rule(s, 'skills') && SOLO.on;
-    const pause = solo ? soloTurnStart(b, d, () => rand(s)) : { skip: false };
+    const solo = rule(s, 'skills') && FX.on;
+    const pause = solo ? fxTurnStart(b, d, () => rand(s)) : { skip: false };
     if (pause.skip) {
       // 용암 동굴 속·맞불 대가: 이번 행동은 공격하지 않는다 (모션도 다시 틀지 않도록 phase 유지)
       b.hp = b.units.reduce((a, u) => a + Math.max(0, u.hp), 0);
       b.skill = pause.label ?? '숨 고르기';
     } else {
     const crit = rand(s) < 0.18;
-    let skill = SKILLS(d, s)[Math.floor(rand(s) * 4)];
-    if (solo) skill = soloResolve(b, d, skill);
+    const env = solo ? envOf(s) : null;
+    // 종족 고유 스킬: 조건·쿨다운·우선순위로 자동 선택 (궁극기 > 방어 > 공격 > 파멸의 발톱)
+    const skill = env ? fxPick(b, d, skillsOf(d.species).map((k) => k.name), env, () => rand(s)) : SKILLS(d, s)[Math.floor(rand(s) * 4)];
     const helpers = defenders(s, d);
     const ord = b.order && b.order.until > b.t ? b.order.type : null;
     const dmg = d.power * (isAdult(d) ? 1 : 0.4) * (1 - Math.min(0.4, d.injury * 0.04)) * (1 + rand(s)) * (crit ? 3 : 1) * (1 + 0.35 * helpers.length)
@@ -826,8 +869,14 @@ export function battleStep(s: State, ctx: Ctx, dt: number) {
     const before = alive.length;
     let extra = '', shown = dmg;
     if (solo) {
-      const r = soloAttack(b, d, skill, dmg, crit, isAreaSkill(s, d, skill), ord === 'focus', () => rand(s));
+      // 레드 열 관성: 게임 시간 10분마다 1씩 식고, 행동할 때마다 1 쌓인다 (최대 5, 전투가 끝나도 남음)
+      const heat = d.species === 1 ? Math.max(0, (d.heat?.n ?? 0) - Math.floor((s.time - (d.heat?.t ?? s.time)) / 600)) : 0;
+      const sink: { brand?: string; heat?: number; vineAt?: number } = { heat };
+      const r = fxAttack(b, d, skill, dmg, crit, isAreaSkill(s, d, skill), ord === 'focus', () => rand(s), env!, sink);
       extra = r.note; shown = r.dmg;
+      if (d.species === 1) d.heat = { n: Math.min(5, heat + 1), t: s.time };
+      if (sink.brand && !(s.brands ??= []).includes(sink.brand)) { s.brands.unshift(sink.brand); s.brands = s.brands.slice(0, 6); }
+      if (sink.vineAt !== undefined) s.vineAt = sink.vineAt;
     } else if (ord === 'focus') {
       // 집중 공격: 가장 약한 적 하나를 노린다
       const u = [...alive].sort((x, y) => x.hp - y.hp)[0];

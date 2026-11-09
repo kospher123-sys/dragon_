@@ -3,12 +3,13 @@ import { BrowserWindow, ipcMain, screen, powerMonitor, nativeImage, type Display
 import path from 'node:path';
 import type { State } from '../engine/engine';
 import { isAdult, titleOf, DEFEND_MAX, rule } from '../engine/engine';
+import { LIFE_OF, type LifeKey } from '../engine/life';
 import type { Settings, DesktopModel, HumanEvent } from '../shared/types';
 import { isFullscreenOn } from './fullscreen';
 
 interface Host {
   state: () => State;
-  act: (a: { type: 'pet'; id: string } | { type: 'bounty' } | { type: 'defend' }) => string | null;
+  act: (a: { type: 'pet'; id: string } | { type: 'bounty' } | { type: 'defend' } | { type: 'life'; key: LifeKey; id?: string; n?: number; miss?: boolean } | { type: 'brand'; name: string }) => string | null;
   test: boolean;
   settings: () => Settings;
   saveSettings: (patch: Partial<Settings>) => void;
@@ -206,6 +207,11 @@ export function startDesktop(h: Host & { log?: (msg: string) => void }) {
   ipcMain.handle('desk:init', () => model());
   ipcMain.handle('desk:pet', (_e, id: string) => host.act({ type: 'pet', id: String(id) }));
   ipcMain.handle('desk:bounty', () => host.act({ type: 'bounty' }));
+  ipcMain.handle('desk:life', (_e, a: { key: LifeKey; id?: string; n?: number; miss?: boolean }) => {
+    if (!a || !LIFE_OF.includes(a.key)) return '알 수 없는 생활 스킬';
+    return host.act({ type: 'life', key: a.key, id: typeof a.id === 'string' ? a.id : undefined, n: Number(a.n) || 0, miss: !!a.miss });
+  });
+  ipcMain.handle('desk:brand', (_e, name: string) => host.act({ type: 'brand', name: String(name).slice(0, 20) }));
   ipcMain.handle('desk:defend', () => (host.test ? host.act({ type: 'defend' }) : '지금은 쓸 수 없는 기능입니다'));
   // 오버레이가 알려 주는 "클릭을 받아야 하는 영역" (창 좌표, DIP)
   ipcMain.on('desk:regions', (_e, r: Rect[]) => { regions = Array.isArray(r) ? r : []; });
