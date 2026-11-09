@@ -52,7 +52,7 @@ export function SettingsTab({ settings, setSettings, init, chronicle, state }: {
           <label className="check"><input type="checkbox" checked={settings.hiddenAll} onChange={(e) => patch({ hiddenAll: e.target.checked })} /> 바탕화면 드래곤 모두 숨기기</label>
           <p className="fine">단축키 <code>Ctrl + Alt + D</code>로 언제든 숨기기/보이기를 바꿀 수 있습니다. 드래곤에 마우스를 올리면 이름표가 뜨고, 밤 11시~아침 6시에는 둥지에서 자는 일이 많아집니다.</p>
         </section>
-        {init.edition === 'test' && state && (
+        {init.features && state && (
           <section>
             <h3>실험 규칙</h3>
             {RULES.map(([k, name, desc]) => (

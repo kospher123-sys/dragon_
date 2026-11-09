@@ -56,6 +56,8 @@ export interface InitData extends Snapshot {
   monitors: { id: number; label: string }[];
   archives: { file: string; title: string }[];
   edition?: 'stable' | 'test';
+  /** 1.5.0부터 테스트판 기능(성장·자동 사냥·실험 규칙·고유 스킬 등)을 본편에서도 켠다 */
+  features?: boolean;
 }
 
 export interface DesktopDragon {

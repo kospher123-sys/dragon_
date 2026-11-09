@@ -1,0 +1,40 @@
+# Windows 빌드: main 또는 ci/* 브랜치에 push하거나 Actions 탭에서 직접 실행하면
+# 본편(Blackflame-win64-v번호)과 테스트판(Blackflame-test-win64-v번호) 아티팩트가 만들어진다.
+# Actions → 실행 기록 → Artifacts에서 내려받는다(30일 보관).
+name: Windows 빌드
+on:
+  push:
+    branches: [main, 'ci/**']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - edition: stable
+            script: build
+            name: Blackflame-win64
+            guide: GUIDE.txt
+            guideName: 안내.txt
+          - edition: test
+            script: build:test
+            name: Blackflame-test-win64
+            guide: TEST_GUIDE.txt
+            guideName: 테스트판_안내.txt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx tsc --noEmit -p .
+      - run: npx vitest run
+      - run: BUILD=${{ matrix.script }} sh tools/pack.sh release
+      - run: cp "${{ matrix.guide }}" "release/Blackflame-win32-x64/${{ matrix.guideName }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}-v${{ github.run_number }}
+          path: release/Blackflame-win32-x64
+          retention-days: 30
