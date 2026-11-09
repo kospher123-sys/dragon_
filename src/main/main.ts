@@ -552,7 +552,12 @@ app.whenReady().then(() => {
     const u = new URL(req.url);
     const name = path.basename(decodeURIComponent(u.pathname));
     const custom = path.join(IMG_OVERRIDE, name);
-    const file = u.host === 'img' && fs.existsSync(custom) ? custom : path.join(RENDERER, u.host, name);
+    let file = u.host === 'img' && fs.existsSync(custom) ? custom : path.join(RENDERER, u.host, name);
+    // 1.5.0: 빌드는 그림을 WebP로 줄여 둔다. .png 로 불러도 같은 이름의 .webp 를 준다 (사용자 교체 PNG가 우선)
+    if (file !== custom && name.endsWith('.png') && !fs.existsSync(file)) {
+      const webp = file.slice(0, -4) + '.webp';
+      if (fs.existsSync(webp)) file = webp;
+    }
     return net.fetch(pathToFileURL(file).toString());
   });
   prepareOverrideFolder();

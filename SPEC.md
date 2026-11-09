@@ -163,3 +163,8 @@ sh tools/pack.sh release   # Windows 포터블 폴더 (아이콘 교체 포함)
 - `src/main/main.ts`의 `FEATURES = true`: 성장·자동 사냥 UI, 실험 규칙 기본 켬, 트레이 사진·일괄 자동 사냥, 바탕화면 방어전이 본편에서도 동작. 렌더러는 `init.features`로 판단(예전 `init.edition === 'test'` 기능 분기).
 - 테스트판 빌드는 없앴다(2026-11-09). 본편 빌드: `sh tools/pack.sh <out>`.
 - 본편 첫 실행 시 `%APPDATA%\흑염룡\world.before-1.5.0.json` 보존.
+
+## 12. 배포 용량 (2026-11-09)
+- `npm run build` 마지막에 `node tools/webp.mjs` 가 dist/renderer/img 의 PNG를 WebP로 바꾼다(원본 PNG는 public/img 에 그대로). app-icon*.png 는 nativeImage 때문에 PNG 유지.
+- main.ts `bf` 프로토콜: 사용자 교체 PNG(%APPDATA%\흑염룡\img) → 같은 이름 .png → 없으면 .webp.
+- 전체 빌드 ZIP 대부분은 Electron(Blackflame.exe 235MB). 게임 내용은 resources/app.asar 하나라, 이미 설치한 PC는 업데이트 팩(app.asar)만 바꾸면 된다. Electron 버전·koffi가 바뀌는 업데이트는 전체 빌드가 필요하다.
