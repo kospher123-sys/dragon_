@@ -10,12 +10,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dragon project
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: dragon project/package-lock.json
       - run: npm ci
       - run: npx tsc --noEmit -p .
       - run: npx vitest run
@@ -30,10 +34,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Blackflame-win64-v${{ github.run_number }}
-          path: release/Blackflame-win32-x64
+          path: dragon project/release/Blackflame-win32-x64
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
           name: Blackflame-update-v${{ github.run_number }}
-          path: update
+          path: dragon project/update
           retention-days: 30
