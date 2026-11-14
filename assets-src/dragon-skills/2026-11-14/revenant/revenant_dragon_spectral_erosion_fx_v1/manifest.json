@@ -1,0 +1,441 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "view": "three-quarter overhead, low ground plane",
+  "sequences": {
+    "release": {
+      "loop": false,
+      "duration_ms": 400,
+      "frames": [
+        {
+          "file": "release/release_01.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_02.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_03.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_04.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_05.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_06.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_07.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "release/release_08.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "mist_spread": {
+      "loop": false,
+      "duration_ms": 640,
+      "frames": [
+        {
+          "file": "mist_spread/mist_spread_01.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_02.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_03.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_04.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_05.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_06.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_07.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mist_spread/mist_spread_08.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "sustained": {
+      "loop": true,
+      "duration_ms": 800,
+      "frames": [
+        {
+          "file": "sustained/sustained_01.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_02.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_03.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_04.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_05.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_06.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_07.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained/sustained_08.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "ghost_hand": {
+      "loop": false,
+      "duration_ms": 640,
+      "frames": [
+        {
+          "file": "ghost_hand/ghost_hand_01.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_02.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_03.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_04.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_05.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_06.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_07.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ghost_hand/ghost_hand_08.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "damage_pulse": {
+      "loop": false,
+      "duration_ms": 360,
+      "frames": [
+        {
+          "file": "damage_pulse/damage_pulse_01.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_02.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_03.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_04.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_05.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_06.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_07.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "damage_pulse/damage_pulse_08.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    }
+  }
+}
