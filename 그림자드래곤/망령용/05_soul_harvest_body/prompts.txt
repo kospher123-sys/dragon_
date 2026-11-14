@@ -1,0 +1,6 @@
+Built-in image_gen used with approved design references.
+
+undefined
+
+
+Two background extraction correction passes: preserve eight poses, erase matte/fringe and all non-character pixels, retain transparent wing membrane and intrinsic glow.

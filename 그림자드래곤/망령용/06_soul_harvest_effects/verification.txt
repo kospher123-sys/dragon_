@@ -1,0 +1,4 @@
+soul_orb: 8 RGBA frames; 444x444; transparent pixels verified.
+soul_travel: 8 RGBA frames; 444x444; transparent pixels verified.
+absorption: 8 RGBA frames; 444x444; transparent pixels verified.
+empowerment: 8 RGBA frames; 444x444; transparent pixels verified.

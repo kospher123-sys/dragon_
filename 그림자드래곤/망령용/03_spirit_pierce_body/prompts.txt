@@ -1,0 +1,6 @@
+Generated using built-in image_gen with the approved master, anatomy sheet and ground-motion reference.
+
+undefined
+
+
+Correction passes: uniform reduction and full-body margins, followed by background extraction while preserving poses.

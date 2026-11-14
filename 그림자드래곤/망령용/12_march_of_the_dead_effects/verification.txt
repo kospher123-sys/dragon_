@@ -1,0 +1,7 @@
+ritual: 8 RGBA frames,444x444,transparent pixels verified.
+soul_eruption: 8 RGBA frames,444x444,transparent pixels verified.
+spectral_crown: 8 RGBA frames,444x444,transparent pixels verified.
+army_emergence: 8 RGBA frames,444x444,transparent pixels verified.
+spirit_charge: 8 RGBA frames,444x444,transparent pixels verified.
+final_impact: 8 RGBA frames,444x444,transparent pixels verified.
+aftermath: 8 RGBA frames,444x444,transparent pixels verified.

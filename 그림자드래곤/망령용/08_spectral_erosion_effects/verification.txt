@@ -1,0 +1,5 @@
+release: 8 RGBA frames, 444x444, transparent pixels verified.
+mist_spread: 8 RGBA frames, 444x444, transparent pixels verified.
+sustained: 8 RGBA frames, 444x444, transparent pixels verified.
+ghost_hand: 8 RGBA frames, 444x444, transparent pixels verified.
+damage_pulse: 8 RGBA frames, 444x444, transparent pixels verified.

@@ -1,0 +1,6 @@
+mouth_charge: 8 RGBA frames; 444x444; transparent pixels verified.
+initial_burst: 8 RGBA frames; 444x444; transparent pixels verified.
+sustained_stream: 8 RGBA frames; 444x444; transparent pixels verified.
+soul_flow: 8 RGBA frames; 444x444; transparent pixels verified.
+endpoint: 8 RGBA frames; 444x444; transparent pixels verified.
+residual_mist: 8 RGBA frames; 444x444; transparent pixels verified.

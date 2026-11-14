@@ -1,0 +1,6 @@
+Built-in image_gen used with approved master, anatomy and ground-motion references.
+
+undefined
+
+
+Correction pass: reduce each dragon uniformly, improve full-body margins, remove matte/fringe, preserve eight casting poses.

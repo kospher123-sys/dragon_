@@ -1,0 +1,613 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "direction": "left",
+  "sequences": {
+    "ritual": {
+      "loop": false,
+      "duration_ms": 720,
+      "frames": [
+        {
+          "file": "ritual/ritual_01.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_02.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_03.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_04.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_05.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_06.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_07.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ritual/ritual_08.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "soul_eruption": {
+      "loop": false,
+      "duration_ms": 520,
+      "frames": [
+        {
+          "file": "soul_eruption/soul_eruption_01.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_02.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_03.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_04.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_05.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_06.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_07.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_eruption/soul_eruption_08.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "spectral_crown": {
+      "loop": false,
+      "duration_ms": 800,
+      "frames": [
+        {
+          "file": "spectral_crown/spectral_crown_01.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_02.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_03.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_04.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_05.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_06.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_07.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spectral_crown/spectral_crown_08.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "army_emergence": {
+      "loop": false,
+      "duration_ms": 720,
+      "frames": [
+        {
+          "file": "army_emergence/army_emergence_01.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_02.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_03.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_04.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_05.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_06.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_07.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "army_emergence/army_emergence_08.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "spirit_charge": {
+      "loop": false,
+      "duration_ms": 480,
+      "frames": [
+        {
+          "file": "spirit_charge/spirit_charge_01.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_02.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_03.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_04.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_05.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_06.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_07.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "spirit_charge/spirit_charge_08.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "final_impact": {
+      "loop": false,
+      "duration_ms": 440,
+      "frames": [
+        {
+          "file": "final_impact/final_impact_01.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_02.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_03.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_04.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_05.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_06.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_07.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "final_impact/final_impact_08.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "aftermath": {
+      "loop": false,
+      "duration_ms": 1040,
+      "frames": [
+        {
+          "file": "aftermath/aftermath_01.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_02.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_03.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_04.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_05.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_06.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_07.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "aftermath/aftermath_08.png",
+          "duration_ms": 130,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    }
+  }
+}

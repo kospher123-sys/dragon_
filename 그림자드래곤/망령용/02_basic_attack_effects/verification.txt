@@ -1,0 +1,4 @@
+projectile_travel: 8 RGBA frames, 444x444, transparent pixels verified
+projectile_impact: 8 RGBA frames, 444x444, transparent pixels verified
+claw_slash: 8 RGBA frames, 444x444, transparent pixels verified
+claw_hit: 8 RGBA frames, 444x444, transparent pixels verified

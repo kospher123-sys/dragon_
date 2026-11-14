@@ -1,0 +1,4 @@
+charge: eight 444x444 RGBA frames; zero-alpha pixels verified.
+piercing_attack: eight 444x444 RGBA frames; zero-alpha pixels verified.
+target_impact: eight 444x444 RGBA frames; zero-alpha pixels verified.
+soul_crack: eight 444x444 RGBA frames; zero-alpha pixels verified.
