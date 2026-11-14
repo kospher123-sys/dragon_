@@ -168,3 +168,8 @@ sh tools/pack.sh release   # Windows 포터블 폴더 (아이콘 교체 포함)
 - `npm run build` 마지막에 `node tools/webp.mjs` 가 dist/renderer/img 의 PNG를 WebP로 바꾼다(원본 PNG는 public/img 에 그대로). app-icon*.png 는 nativeImage 때문에 PNG 유지.
 - main.ts `bf` 프로토콜: 사용자 교체 PNG(%APPDATA%\흑염룡\img) → 같은 이름 .png → 없으면 .webp.
 - 전체 빌드 ZIP 대부분은 Electron(Blackflame.exe 235MB). 게임 내용은 resources/app.asar 하나라, 이미 설치한 PC는 업데이트 팩(app.asar)만 바꾸면 된다. Electron 버전·koffi가 바뀌는 업데이트는 전체 빌드가 필요하다.
+
+## 13. 그림자 드래곤 신규 기획 (2026-11-14)
+
+- [그림자 드래곤 스킬 기획 v0.1](docs/SHADOW_DRAGON_SKILL_DESIGN.md): 패시브·할퀴기·브레스·마법 방어막·궁극기의 신규 제안, 첨부 모션 매핑, 수치 초안 및 후속 검증 기준.
+- 상태: 기획 문서만 반영. 신규 종족·고유 효과·원본 이미지·배포 파일은 미적용이며, 기존 12종과 4슬롯의 실행 규칙은 유지한다.
