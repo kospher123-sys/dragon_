@@ -1,0 +1,16 @@
+Edit reference sprite sheet to correct production problems. Preserve original dark painterly character/effect identity. Output ONE corrected sheet only. Original specification:
+첨부 이미지를 기준으로 2D 게임용 그림자 드래곤 애니메이션 스프라이트 시트 1장을 제작해줘.
+검은 비늘, 보라색 날개막, 뿔·등가시·긴 꼬리, 네 발과 두 날개의 구조, 원본의 회화적인 판타지 화풍을 일관되게 유지해줘. 다른 드래곤으로 재해석하거나 귀엽게 단순화하지 마.
+출력은 투명 배경 PNG, 2048×1536px, 4열×3행, 동일한 512×512px 셀 12개. 왼쪽 위부터 오른쪽으로 읽고 다음 행으로 이어지는 시간순 12프레임이다. 글자·숫자·셀 경계선·워터마크·배경·체커보드 무늬를 그리지 마.
+카메라는 고정된 측면에 가까운 원본 시점, 오른쪽 방향. 원근과 조명, 본체 크기는 모든 셀에서 동일하게 유지하고 좌우 반전·회전·줌을 하지 마. 꼬리·날개 끝과 입자까지 셀 안에 여백을 두고 담아줘. 프레임 사이를 침범하거나 잘리지 않게 해줘.
+각 셀의 좌상단을 (0,0)으로 볼 때 지상 발바닥 기준 y=430, 몸통 기준 x=240을 사용해줘. 모션에 필요한 팔다리·목·날개만 자연스럽게 움직이고, 지상 동작에서 발이 미끄러지거나 몸통이 흔들리지 않게 해줘. 같은 포즈 12개를 복제하지 말고 동작이 이어지도록 제작해줘.
+
+이번에 제작할 것: 궁극기 본체 모션
+드래곤 본체만. 바닥 그림자·폭발·안개는 제외. 1~3: 네 발로 힘을 모으며 날개를 펼침. 4~6: 한 번 크게 날갯짓해 짧게 떠오름. 7~8: 공중에서 날개를 최대로 펴고 위압적인 자세. 9: 날개를 강하게 접는 발동 포즈. 10~11: 내려앉음. 12: 최초의 기본 서기 자세. 고정 카메라·동일 크기를 유지하고 공중 이동은 셀 안의 작은 수직 이동만. 최고점에도 날개 끝과 꼬리가 잘리지 않게 기본 크기를 충분히 작게 설정. 발바닥 기준은 지상에서 y=430, 공중에서는 위로 최대 70px 이동 가능. 비행 시트는 날개 구조와 펼침 참고.
+
+출력 파일명 제안: shadow_01_body_ultimate.png
+요청한 1개 시트만 출력해줘.
+
+
+PRIORITY CORRECTIONS: Whole dragon including fully spread wings32px safe margins each cell. Fixed body scale. Rise maximum70px, same ground baseline430. Frame1 and12 EXACT same neutral standing pose;7-8spread,9fold,10-11land.
+Output exactly2048x1536 PNG RGBA (not1448x1086),4x3 equal512px cells. True alpha background. Fixed per-cell anchors. No grid,text,numbers,checkerboard. Muted violet and charcoal only, never white glow. Keep all12 frames aligned.

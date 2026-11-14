@@ -1,0 +1,14 @@
+Edit reference sprite sheet to correct production problems. Preserve original dark painterly character/effect identity. Output ONE corrected sheet only. Original specification:
+첨부 이미지는 그림자 드래곤의 색감과 회화적 화풍 참고용이야. 이번에는 드래곤 본체·적·배경 없이 이펙트만 제작해줘.
+2D 게임용 검보라색 그림자 마법 이펙트 애니메이션 스프라이트 시트 1장. 보라색 가장자리와 먹빛 중심이 투명 배경에서도 형태를 읽을 수 있게 하고, 불필요한 흰색 번쩍임이나 붉은 불꽃은 넣지 마.
+투명 배경 RGBA PNG, 2048×1536px, 4열×3행, 셀당 512×512px, 왼쪽 위부터 행 우선 시간순 12프레임. 카메라·크기·중심점 고정. 모든 입자와 잔광은 각 셀 안쪽에 여백을 남겨 잘리지 않게 해줘. 글자·프레임 번호·격자선·워터마크·체커보드 무늬·검은 사각 배경은 넣지 마. 투명한 부분을 검정색으로 채우지 마.
+
+이번에 제작할 것: 표식 2중첩 루프
+대상 발밑의 납작한 타원형 그림자 표식. 서로 구분되는 초승달 2개를 같은 타원 안에 균형 있게 배치. 중심 (256,350), 최대 폭 320 높이 140. 12프레임 동안 두 초승달 개수·위치는 유지하고 가장자리만 약하게 호흡하는 루프. 12→1 자연스럽게 연결. 가능하면 앞서 만든 1중첩 결과도 함께 첨부하여 크기·선 굵기를 일치시켜줘.
+
+출력 파일명 제안: shadow_02_mark_2_loop.png
+요청한 1개 시트만 출력해줘.
+
+
+PRIORITY CORRECTIONS: Exactly TWO separately readable crescents, not merged circular ring; identical count/shape/position all frames. Max320x140 fixed256,350.
+Output exactly2048x1536 PNG RGBA (not1448x1086),4x3 equal512px cells. True alpha background. Fixed per-cell anchors. No grid,text,numbers,checkerboard. Muted violet and charcoal only, never white glow. Keep all12 frames aligned.

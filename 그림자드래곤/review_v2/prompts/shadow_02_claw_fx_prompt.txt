@@ -1,0 +1,14 @@
+Edit reference sprite sheet to correct production problems. Preserve original dark painterly character/effect identity. Output ONE corrected sheet only. Original specification:
+첨부 이미지는 그림자 드래곤의 색감과 회화적 화풍 참고용이야. 이번에는 드래곤 본체·적·배경 없이 이펙트만 제작해줘.
+2D 게임용 검보라색 그림자 마법 이펙트 애니메이션 스프라이트 시트 1장. 보라색 가장자리와 먹빛 중심이 투명 배경에서도 형태를 읽을 수 있게 하고, 불필요한 흰색 번쩍임이나 붉은 불꽃은 넣지 마.
+투명 배경 RGBA PNG, 2048×1536px, 4열×3행, 셀당 512×512px, 왼쪽 위부터 행 우선 시간순 12프레임. 카메라·크기·중심점 고정. 모든 입자와 잔광은 각 셀 안쪽에 여백을 남겨 잘리지 않게 해줘. 글자·프레임 번호·격자선·워터마크·체커보드 무늬·검은 사각 배경은 넣지 마. 투명한 부분을 검정색으로 채우지 마.
+
+이번에 제작할 것: 발톱 궤적 이펙트
+세 줄의 보라색 발톱 궤적과 짧은 먹빛 잔상만. 셀 중심 (256,256), 최대 390×340px. 오른쪽을 향하는 공격이 위에서 아래로 대각선으로 그어진다. 1~4: 아주 옅은 준비 잔광. 5: 세 줄이 생김. 6: 궤적 최대 강도. 7: 짧은 검은 잔상. 8~11: 끊어지며 소멸. 12: 완전히 투명. 앞발·드래곤 신체를 그리지 마. 본체 모션과 별도 합성할 레이어야.
+
+출력 파일명 제안: shadow_02_claw_fx.png
+요청한 1개 시트만 출력해줘.
+
+
+PRIORITY CORRECTIONS: Frames1-4 almost invisible prep only,5 appear THREE THIN separate slash lines,6 maximum,7 dark afterimage,8-11 fade,12 empty. No broad purple opaque fan or white highlights.
+Output exactly2048x1536 PNG RGBA (not1448x1086),4x3 equal512px cells. True alpha background. Fixed per-cell anchors. No grid,text,numbers,checkerboard. Muted violet and charcoal only, never white glow. Keep all12 frames aligned.
