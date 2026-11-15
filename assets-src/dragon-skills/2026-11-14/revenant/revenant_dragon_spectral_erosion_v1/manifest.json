@@ -1,0 +1,104 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "facing": "left",
+  "loop": false,
+  "suggested_duration_ms": 1000,
+  "release_frame": 5,
+  "sustain_frame": 6,
+  "battlefield_mist_included": false,
+  "frames": [
+    {
+      "file": "spectral_erosion_01.png",
+      "stage": "neutral",
+      "duration_ms": 80,
+      "atlas_rect": [
+        0,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_02.png",
+      "stage": "lowered_preparation",
+      "duration_ms": 110,
+      "atlas_rect": [
+        444,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_03.png",
+      "stage": "chest_buildup",
+      "duration_ms": 130,
+      "atlas_rect": [
+        888,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_04.png",
+      "stage": "peak_buildup",
+      "duration_ms": 150,
+      "atlas_rect": [
+        1332,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_05.png",
+      "stage": "outward_release",
+      "duration_ms": 90,
+      "atlas_rect": [
+        0,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_06.png",
+      "stage": "sustained_release",
+      "duration_ms": 200,
+      "atlas_rect": [
+        444,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_07.png",
+      "stage": "recovery",
+      "duration_ms": 130,
+      "atlas_rect": [
+        888,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spectral_erosion_08.png",
+      "stage": "neutral_return",
+      "duration_ms": 110,
+      "atlas_rect": [
+        1332,
+        444,
+        444,
+        444
+      ]
+    }
+  ]
+}

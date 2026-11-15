@@ -1,0 +1,103 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "facing": "left",
+  "loop": false,
+  "suggested_duration_ms": 660,
+  "release_frame": 5,
+  "effects_included": false,
+  "frames": [
+    {
+      "file": "spirit_pierce_01.png",
+      "stage": "neutral",
+      "duration_ms": 70,
+      "atlas_rect": [
+        0,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_02.png",
+      "stage": "preparation",
+      "duration_ms": 90,
+      "atlas_rect": [
+        444,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_03.png",
+      "stage": "soul_core_charge",
+      "duration_ms": 110,
+      "atlas_rect": [
+        888,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_04.png",
+      "stage": "peak_charge",
+      "duration_ms": 110,
+      "atlas_rect": [
+        1332,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_05.png",
+      "stage": "focused_release",
+      "duration_ms": 55,
+      "atlas_rect": [
+        0,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_06.png",
+      "stage": "follow_through",
+      "duration_ms": 65,
+      "atlas_rect": [
+        444,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_07.png",
+      "stage": "recovery",
+      "duration_ms": 80,
+      "atlas_rect": [
+        888,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "spirit_pierce_08.png",
+      "stage": "neutral_return",
+      "duration_ms": 80,
+      "atlas_rect": [
+        1332,
+        444,
+        444,
+        444
+      ]
+    }
+  ]
+}

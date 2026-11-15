@@ -1,0 +1,169 @@
+{
+  "format": "RGBA PNG",
+  "frame_size": [
+    444,
+    444
+  ],
+  "order": "01 through 08",
+  "effects_included": false,
+  "sets": {
+    "ranged": {
+      "frames": [
+        {
+          "file": "ranged/ranged_01.png",
+          "source_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "ranged/ranged_02.png",
+          "source_rect": [
+            444,
+            0,
+            887,
+            444
+          ]
+        },
+        {
+          "file": "ranged/ranged_03.png",
+          "source_rect": [
+            887,
+            0,
+            1330,
+            444
+          ]
+        },
+        {
+          "file": "ranged/ranged_04.png",
+          "source_rect": [
+            1330,
+            0,
+            1774,
+            444
+          ]
+        },
+        {
+          "file": "ranged/ranged_05.png",
+          "source_rect": [
+            0,
+            444,
+            444,
+            887
+          ]
+        },
+        {
+          "file": "ranged/ranged_06.png",
+          "source_rect": [
+            444,
+            444,
+            887,
+            887
+          ]
+        },
+        {
+          "file": "ranged/ranged_07.png",
+          "source_rect": [
+            887,
+            444,
+            1330,
+            887
+          ]
+        },
+        {
+          "file": "ranged/ranged_08.png",
+          "source_rect": [
+            1330,
+            444,
+            1774,
+            887
+          ]
+        }
+      ],
+      "suggested_frame_duration_ms": 60,
+      "event_frame": 5,
+      "event": "projectile release"
+    },
+    "melee": {
+      "frames": [
+        {
+          "file": "melee/melee_01.png",
+          "source_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "melee/melee_02.png",
+          "source_rect": [
+            444,
+            0,
+            887,
+            444
+          ]
+        },
+        {
+          "file": "melee/melee_03.png",
+          "source_rect": [
+            887,
+            0,
+            1330,
+            444
+          ]
+        },
+        {
+          "file": "melee/melee_04.png",
+          "source_rect": [
+            1330,
+            0,
+            1774,
+            444
+          ]
+        },
+        {
+          "file": "melee/melee_05.png",
+          "source_rect": [
+            0,
+            444,
+            444,
+            887
+          ]
+        },
+        {
+          "file": "melee/melee_06.png",
+          "source_rect": [
+            444,
+            444,
+            887,
+            887
+          ]
+        },
+        {
+          "file": "melee/melee_07.png",
+          "source_rect": [
+            887,
+            444,
+            1330,
+            887
+          ]
+        },
+        {
+          "file": "melee/melee_08.png",
+          "source_rect": [
+            1330,
+            444,
+            1774,
+            887
+          ]
+        }
+      ],
+      "suggested_frame_duration_ms": 45,
+      "event_frame": 5,
+      "event": "claw contact"
+    }
+  }
+}

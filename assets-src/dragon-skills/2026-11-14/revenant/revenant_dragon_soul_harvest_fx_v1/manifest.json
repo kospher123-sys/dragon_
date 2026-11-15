@@ -1,0 +1,370 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "sequences": {
+    "soul_orb": {
+      "loop": true,
+      "duration_ms": 720,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "frames": [
+        {
+          "file": "soul_orb/soul_orb_01.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_02.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_03.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_04.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_05.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_06.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_07.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_orb/soul_orb_08.png",
+          "duration_ms": 90,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "soul_travel": {
+      "loop": false,
+      "duration_ms": 420,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "frames": [
+        {
+          "file": "soul_travel/soul_travel_01.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_02.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_03.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_04.png",
+          "duration_ms": 55,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_05.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_06.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_07.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_travel/soul_travel_08.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "absorption": {
+      "loop": false,
+      "duration_ms": 460,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "frames": [
+        {
+          "file": "absorption/absorption_01.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_02.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_03.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_04.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_05.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_06.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_07.png",
+          "duration_ms": 50,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "absorption/absorption_08.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "empowerment": {
+      "loop": false,
+      "duration_ms": 680,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "frames": [
+        {
+          "file": "empowerment/empowerment_01.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_02.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_03.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_04.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_05.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_06.png",
+          "duration_ms": 100,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_07.png",
+          "duration_ms": 80,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "empowerment/empowerment_08.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,527 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "direction": "left",
+  "sequences": {
+    "mouth_charge": {
+      "loop_suggested": false,
+      "duration_ms": 520,
+      "frames": [
+        {
+          "file": "mouth_charge/mouth_charge_01.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_02.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_03.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_04.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_05.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_06.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_07.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "mouth_charge/mouth_charge_08.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "initial_burst": {
+      "loop_suggested": false,
+      "duration_ms": 280,
+      "frames": [
+        {
+          "file": "initial_burst/initial_burst_01.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_02.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_03.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_04.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_05.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_06.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_07.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "initial_burst/initial_burst_08.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "sustained_stream": {
+      "loop_suggested": true,
+      "duration_ms": 520,
+      "frames": [
+        {
+          "file": "sustained_stream/sustained_stream_01.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_02.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_03.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_04.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_05.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_06.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_07.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "sustained_stream/sustained_stream_08.png",
+          "duration_ms": 65,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "soul_flow": {
+      "loop_suggested": true,
+      "duration_ms": 560,
+      "frames": [
+        {
+          "file": "soul_flow/soul_flow_01.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_02.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_03.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_04.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_05.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_06.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_07.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "soul_flow/soul_flow_08.png",
+          "duration_ms": 70,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "endpoint": {
+      "loop_suggested": false,
+      "duration_ms": 360,
+      "frames": [
+        {
+          "file": "endpoint/endpoint_01.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_02.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_03.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_04.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_05.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_06.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_07.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "endpoint/endpoint_08.png",
+          "duration_ms": 45,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "residual_mist": {
+      "loop_suggested": false,
+      "duration_ms": 960,
+      "frames": [
+        {
+          "file": "residual_mist/residual_mist_01.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_02.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_03.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_04.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_05.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_06.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_07.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "residual_mist/residual_mist_08.png",
+          "duration_ms": 120,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    }
+  }
+}

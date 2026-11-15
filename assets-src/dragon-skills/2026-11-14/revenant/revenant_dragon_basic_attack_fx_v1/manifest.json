@@ -1,0 +1,375 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "grid": [
+    4,
+    2
+  ],
+  "direction": "left",
+  "sequences": {
+    "projectile_travel": {
+      "loop": true,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "suggested_visible_width_relative_to_dragon": 0.24,
+      "frames": [
+        {
+          "file": "projectile_travel/projectile_travel_01.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_02.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_03.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_04.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_05.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_06.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_07.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_travel/projectile_travel_08.png",
+          "duration_ms": 60,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "projectile_impact": {
+      "loop": false,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "suggested_visible_width_relative_to_dragon": 0.3,
+      "frames": [
+        {
+          "file": "projectile_impact/projectile_impact_01.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_02.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_03.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_04.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_05.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_06.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_07.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "projectile_impact/projectile_impact_08.png",
+          "duration_ms": 40,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "claw_slash": {
+      "loop": false,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "suggested_visible_width_relative_to_dragon": 0.28,
+      "frames": [
+        {
+          "file": "claw_slash/claw_slash_01.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_02.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_03.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_04.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_05.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_06.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_07.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_slash/claw_slash_08.png",
+          "duration_ms": 35,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    },
+    "claw_hit": {
+      "loop": false,
+      "pivot_normalized": [
+        0.5,
+        0.5
+      ],
+      "suggested_visible_width_relative_to_dragon": 0.16,
+      "frames": [
+        {
+          "file": "claw_hit/claw_hit_01.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            0,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_02.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            444,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_03.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            888,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_04.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            1332,
+            0,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_05.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            0,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_06.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            444,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_07.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            888,
+            444,
+            444,
+            444
+          ]
+        },
+        {
+          "file": "claw_hit/claw_hit_08.png",
+          "duration_ms": 30,
+          "atlas_rect": [
+            1332,
+            444,
+            444,
+            444
+          ]
+        }
+      ]
+    }
+  }
+}

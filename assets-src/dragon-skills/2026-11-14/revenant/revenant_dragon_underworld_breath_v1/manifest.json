@@ -1,0 +1,104 @@
+{
+  "format": "RGBA PNG",
+  "alpha": "straight",
+  "frame_size": [
+    444,
+    444
+  ],
+  "facing": "left",
+  "loop": false,
+  "suggested_duration_ms": 1150,
+  "release_frame": 4,
+  "sustained_frame": 5,
+  "emitted_breath_included": false,
+  "frames": [
+    {
+      "file": "underworld_breath_01.png",
+      "stage": "charge",
+      "duration_ms": 110,
+      "atlas_rect": [
+        0,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_02.png",
+      "stage": "intake",
+      "duration_ms": 140,
+      "atlas_rect": [
+        444,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_03.png",
+      "stage": "jaw_open_neck_tension",
+      "duration_ms": 150,
+      "atlas_rect": [
+        888,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_04.png",
+      "stage": "full_release",
+      "duration_ms": 90,
+      "atlas_rect": [
+        1332,
+        0,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_05.png",
+      "stage": "sustained_breath",
+      "duration_ms": 300,
+      "atlas_rect": [
+        0,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_06.png",
+      "stage": "ending_release",
+      "duration_ms": 110,
+      "atlas_rect": [
+        444,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_07.png",
+      "stage": "recovery",
+      "duration_ms": 140,
+      "atlas_rect": [
+        888,
+        444,
+        444,
+        444
+      ]
+    },
+    {
+      "file": "underworld_breath_08.png",
+      "stage": "neutral",
+      "duration_ms": 110,
+      "atlas_rect": [
+        1332,
+        444,
+        444,
+        444
+      ]
+    }
+  ]
+}
