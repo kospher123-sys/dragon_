@@ -1,14 +1,15 @@
-// '아군 필요' 12개 혼자 판본 밸런스: 종족별로 같은 전투를 효과 켬/끔으로 N번씩 돌려 승률·남은 생명력 비교.
+// 종족 고유 스킬 밸런스 (v1.6): 종족별로 같은 전투를 효과 켬(자동 선택·고유 효과·적 쪽 확장) / 끔(v1.4 무작위·효과 없음)으로
+// N번씩 돌려 승률·남은 생명력 비교. ENEMY=1 이면 적 쪽 확장만 켠다(스킬은 무작위·효과 없음).
 //   npx tsx tools/balance-skills.ts [N=400]
 import { newState, act, newCtx, startBattle, battleStep, type State } from '../src/engine/engine';
-import { SOLO } from '../src/engine/skillfx';
+import { FX } from '../src/engine/skillfx';
 import { SPECIES } from '../src/engine/data';
 
 const N = Number(process.argv[2] || 400);
-const SPS = (process.env.SP ? process.env.SP.split(',').map(Number) : [1, 2, 3, 5, 6, 7, 8, 9, 10, 11]); // '아군 필요' 스킬이 있는 종족
+const SPS = (process.env.SP ? process.env.SP.split(',').map(Number) : SPECIES.map((_, i) => i));
 
 function run(sp: number, seed: number, force: number, on: boolean) {
-  SOLO.on = on;
+  FX.on = on; FX.enemyOnly = !!process.env.ENEMY;
   const s: State = newState(seed);
   act(s, { type: 'start', name: '시험' });
   act(s, { type: 'rule', key: 'skills', on: true });
@@ -22,7 +23,7 @@ function run(sp: number, seed: number, force: number, on: boolean) {
 }
 
 console.log(`종족 · 승률 끔→켬 (차이) · 남은 생명력 끔→켬 · 전사 끔→켬   (N=${N})`);
-for (const force of [700, 1000]) {
+for (const force of [700, 1000, 1200]) {
   console.log(`-- 적 전력 ${force}`);
   for (const sp of SPS) {
     const r = { off: { w: 0, hp: 0, dead: 0 }, on: { w: 0, hp: 0, dead: 0 } };
@@ -36,4 +37,4 @@ for (const force of [700, 1000]) {
     console.log(`${SPECIES[sp].padEnd(4)} ${p(r.off.w)}% → ${p(r.on.w)}% (${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%p) · 생명력 ${p(r.off.hp)}% → ${p(r.on.hp)}% · 전사 ${p(r.off.dead)}% → ${p(r.on.dead)}%`);
   }
 }
-SOLO.on = true;
+FX.on = true; FX.enemyOnly = false;

@@ -25,10 +25,11 @@ describe("'아군 필요' 12개 혼자 판본", () => {
       const k = all.find((x) => x.name === n);
       expect(k, n).toBeDefined();
       expect(k!.implemented).toBe(true);
-      expect(k!.solo).toBe(SOLO_DESC[n]);
+      expect(k!.solo).toBe(true);
+      expect(k!.effect).toBe(SOLO_DESC[n]);
       expect(k!.slot).not.toBe(2); // 생활 스킬이 아님 (전투 칸)
     }
-    expect(all.filter((k) => k.implemented).length).toBe(12);
+    expect(all.filter((k) => k.implemented).length).toBe(48); // v1.6: 48개 모두
   });
 
   it('조건이 안 맞는 궁극기·전투당 횟수를 다 쓴 스킬은 파멸의 발톱으로 바뀐다', () => {
@@ -42,25 +43,25 @@ describe("'아군 필요' 12개 혼자 판본", () => {
     expect(soloResolve(b, d, '열 관성')).toBe('열 관성'); // 12개 밖은 그대로
   });
 
-  it('맞불: 큰 공격 −70%, 다음 공격 −30%, 대가로 다음 행동을 쉰다', () => {
+  it('맞불: 큰 공격 −30%, 다음 공격 −15%, 대가로 다음 행동을 쉰다', () => {
     const { b, d } = setup(1);
     turn(b, d);
     soloAttack(b, d, '맞불', 100, false, false, false, rnd());
     expect(soloIncoming(b, d, 100, false, rnd())).toBe(100);
-    expect(soloIncoming(b, d, 100, true, rnd())).toBeCloseTo(30);
     expect(soloIncoming(b, d, 100, true, rnd())).toBeCloseTo(70);
+    expect(soloIncoming(b, d, 100, true, rnd())).toBeCloseTo(85);
     expect(turn(b, d).skip).toBe(true);
     expect(turn(b, d).skip).toBe(false);
   });
 
-  it('가마 소성: 3턴 동안 피해 −40%·회복, 끝나면 소성됨 −15%', () => {
+  it('가마 소성: 3턴 동안 피해 −30%·회복, 끝나면 소성됨 −10%', () => {
     const { b, d } = setup(1, 0.4);
     turn(b, d);
     soloAttack(b, d, '가마 소성', 100, false, false, false, rnd());
-    expect(soloIncoming(b, d, 100, false, rnd())).toBeCloseTo(60);
+    expect(soloIncoming(b, d, 100, false, rnd())).toBeCloseTo(70);
     for (let i = 0; i < 3; i++) turn(b, d);
-    expect(d.hp).toBeCloseTo(400 + 150);
-    expect(soloIncoming(b, d, 100, false, rnd())).toBeCloseTo(85);
+    expect(d.hp).toBeCloseTo(400 + 90);
+    expect(soloIncoming(b, d, 100, false, rnd())).toBeCloseTo(90);
   });
 
   it('거품 그물: 겹이 쌓이고 블루의 단일 공격이 다른 적에게 터진다', () => {
@@ -86,15 +87,18 @@ describe("'아군 필요' 12개 혼자 판본", () => {
     soloAttack(b, d, '접순', 100, false, false, false, rnd(0));
     const t = total(b);
     for (let i = 0; i < 3; i++) turn(b, d);
-    expect(t - total(b)).toBeCloseTo(24);
-    expect(d.hp).toBeCloseTo(530);
+    expect(t - total(b)).toBeCloseTo(15);
+    expect(d.hp).toBeCloseTo(520);
     expect(soloOf(b).graft).toBeUndefined();
   });
 
-  it('루비 발진: 펌핑이 6이 되어야 쓸 수 있고 쓰면 0', () => {
+  it('루비 발진: 펌핑이 8이 되어야 쓸 수 있고 쓰면 0', () => {
     const { b, d } = setup(5);
-    for (let i = 0; i < 3; i++) soloAttack(b, d, '성채', 10, true, false, false, rnd());
+    for (let i = 0; i < 3; i++) soloAttack(b, d, '파멸의 발톱', 10, true, false, false, rnd());
     expect(soloOf(b).pump).toBe(6);
+    expect(soloResolve(b, d, '루비 발진')).toBe('파멸의 발톱');
+    soloAttack(b, d, '파멸의 발톱', 10, true, false, false, rnd());
+    expect(soloOf(b).pump).toBe(8);
     expect(soloResolve(b, d, '루비 발진')).toBe('루비 발진');
     soloAttack(b, d, '루비 발진', 10, false, true, false, rnd());
     expect(soloOf(b).pump).toBe(0);
@@ -105,9 +109,9 @@ describe("'아군 필요' 12개 혼자 판본", () => {
     turn(b, d);
     soloAttack(b, d, '구전', 100, false, true, false, rnd());
     soloTurnStart(b, d, rnd(0.1)); // 셋 다 폭풍 자신
-    expect(soloOf(b).charge).toBeCloseTo(0.9);
+    expect(soloOf(b).charge).toBeCloseTo(0.6);
     const r = soloAttack(b, d, '파멸의 발톱', 100, false, false, false, rnd());
-    expect(r.dmg).toBeCloseTo(190);
+    expect(r.dmg).toBeCloseTo(160);
     expect(soloOf(b).charge).toBe(0);
   });
 
@@ -165,8 +169,8 @@ describe("'아군 필요' 12개 혼자 판본", () => {
     expect(soloStatus(b).some((t) => t.startsWith('허들'))).toBe(true);
   });
 
-  it('12개 종족 모두 효과를 켠 채 전투가 정상적으로 끝난다', () => {
-    for (const sp of [1, 2, 3, 5, 6, 7, 8, 9, 10, 11]) {
+  it('12종 모두 효과를 켠 채 전투가 정상적으로 끝난다', () => {
+    for (let sp = 0; sp < 12; sp++) {
       const { s, d } = setup(sp);
       d.power = 60;
       const ctx = newCtx(false);

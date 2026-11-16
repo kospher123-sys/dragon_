@@ -154,8 +154,8 @@ export function DetailTab({ state, d, settings, setSettings }: { state: State; d
               <div>
                 <h4>{k.name} <span className={'slot slot-' + k.slot}>{SLOTS[k.slot]}</span></h4>
                 <p className="fine">{k.desc}</p>
-                {k.solo && <p className="fine"><b>혼자일 때</b> {k.solo}</p>}
-                <p className="fine">{k.kind} · 바탕화면: {k.desk}{k.implemented ? (k.solo ? ' · 혼자 판본 효과 적용(아군 판본은 다음 단계)' : '') : ' · 효과는 아직 없음(연출만)'}</p>
+                {k.effect && <p className="fine"><b>{k.solo ? '혼자일 때' : k.slot === 2 ? '바탕화면' : '전투'}</b> {k.effect}</p>}
+                <p className="fine">{k.kind} · 바탕화면: {k.desk}{k.implemented ? (k.solo ? ' · 아군 판본은 다음 단계' : '') : ' · 효과는 아직 없음(연출만)'}</p>
               </div>
             </div>
           ))}

@@ -4,6 +4,7 @@ import { sheets, speciesRow, hasSpeciesWalk, hasMonstersDesk } from '../sprites'
 import { GRADES, GRADE_COLOR, SPECIES } from '../../engine/data';
 import { personalityOf, type Personality } from '../../engine/engine';
 import { skillsOf, fxVisible, type SkillDef, type Fx } from '../../engine/skills';
+import { startLife, stepLife, drawLife, lifeOnPet, lifeOnCast, lifeOnReturn } from './life';
 
 // ---------------------------------------------------------------- 상수
 const ATTACK_COOLDOWN = 1000; // ms, 연타해도 1초에 1회
@@ -274,6 +275,7 @@ function comeBack(e: DragonE) {
   e.hidden = false;
   e.leaving = false;
   e.alpha = 1;
+  lifeOnReturn(e.d.id, e.d.species);
   e.x = fromLeft ? -sz.w : W + sz.w;
   e.y = H * rnd(0.15, 0.35);
   e.mode = 'fly';
@@ -298,12 +300,15 @@ const isNight = () => { const h = new Date().getHours(); return h >= 23 || h < 6
 let nextLife = performance.now() + 30_000;
 
 /** 생활 스킬 연출: 가끔 한 마리가 제자리에서 자기 종족 생활 스킬을 보여 준다 */
-function tryLifeSkill(e: DragonE): boolean {
+function tryLifeSkill(e: DragonE, force = false): boolean {
   const now = performance.now();
-  if (!model.skills || control || defense || now < nextLife || e.d.hurt || isNight() || e.y < ground() - 2) return false;
-  if (Math.random() > 0.25) return false;
-  nextLife = now + rnd(45_000, 110_000);
+  // 서리 '눈송이 받기'는 밤 스킬이라 밤에도 나온다
+  if (!model.skills || control || defense || e.y < ground() - 2) return false;
+  if (!force && (now < nextLife || e.d.hurt || (isNight() && e.d.species !== 10) || Math.random() > 0.25)) return false;
+  if (!force) nextLife = now + rnd(45_000, 110_000);
+  if (e.mode === 'cast' || e.mode === 'attackFly' || e.mode === 'fly') return false;
   const def = skillsOf(e.d.species)[2];
+  lifeOnCast(e.d.id, e.d.species, e.x + e.facing * dragonSize(e.d).w * 1.2);
   const sz = dragonSize(e.d);
   e.mode = 'cast';
   e.timer = LIFE_TIME;
@@ -538,6 +543,8 @@ function attack(m: Target) {
   e.speed = Math.max(260, dist / FLY_TO_TARGET);
   e.facing = m.x >= e.tx ? 1 : -1;
   effect = { skill, from: e, target: m, t: -1, hitDone: false, dur: def ? SKILL_TIME : EFFECT_TIME, sk: def };
+  // 흑염 낙인: 흑염룡이 쫓아낸 몬스터 종류를 기억해 두면 사냥터에서 다시 만났을 때 강해진다
+  if (model.skills && e.d.species === 0 && !isHuman(m)) void api.brand(MONSTER_NAMES[m.kind]);
   const name = def ? def.name : skill === 0 && e.d.species !== 0 ? '숨결' : SKILL_NAMES[skill];
   skillText = { text: `${e.d.name.split(' · ')[0]} · ${name}`, x: e.tx, y: e.ty - 90, t: 1.6 };
 }
@@ -1623,6 +1630,7 @@ function onDown(ev: MouseEvent) {
       void api.pet(e.d.id).then((err) => {
         if (!err) {
           props.push({ kind: 'heart', x: e.x, y: e.y - dragonSize(e.d).h * 0.8, t: 0, max: 1.6 });
+          lifeOnPet(e.d.id, e.x, e.y - dragonSize(e.d).h);
           e.speech = pickLine(['크릉… 기분 좋다.', '♡', '조금 더…', '흥, 싫진 않군.']);
           e.speechT = 2.5;
         }
@@ -1689,6 +1697,7 @@ function frameBody(now: number) {
   stepHumans(step, now);
   stepSeason(step);
   stepEffect(step);
+  stepLife(step, now);
   if (skillText) { skillText.t -= step; if (skillText.t <= 0) skillText = null; }
 
   g.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
@@ -1698,10 +1707,12 @@ function frameBody(now: number) {
   drawNest();
   for (const m of monsters) drawMonster(m);
   drawProps();
+  drawLife(g);
   const order = [...dragons.values()].sort((a, b) => a.y - b.y);
   for (const e of order) if (e.alpha > 0.01 && !(e.hidden && e.alpha <= 0.01)) drawDragon(e);
   // 인간은 땅 위 드래곤들보다 앞에 그려 잘 보이게 한다
   for (const h of humans) drawHuman(h);
+  drawLife(g, 'top');
   drawNestButtons();
   // 이름표는 겹친 드래곤들에 가리지 않게 맨 위에 그린다
   if (tagged && !tagged.gone && tagged.speechT <= 0 && tagged.alpha > 0.5 && !dragging) {
@@ -1803,6 +1814,20 @@ export async function startOverlay(a: DesktopApi) {
     e.timer = hold === undefined ? dur : 1e9;
     e.sk = { def, t: (hold ?? 0) * dur, dur, tx: slot === 2 || !m ? e.x + dragonSize(e.d).w * 1.2 : m.x, tyC: ground() - MONSTER_H / 2, hold };
   };
+  startLife({
+    W: () => W, H: () => H, ground,
+    mouse: () => mouse,
+    dragons: () => [...dragons.values()].filter((e) => present(e) && e.alpha > 0.5).map((e) => {
+      const sz = dragonSize(e.d);
+      return { id: e.d.id, species: e.d.species, x: e.x, y: e.y, w: sz.w, h: sz.h, hurt: !!e.d.hurt, home: e.d.home };
+    }),
+    say: (id, text, t = 2.5) => { const e = dragons.get(id); if (e) { e.speech = text; e.speechT = t; } },
+    cast: (id) => { const e = dragons.get(id); return !!e && tryLifeSkill(e, true); },
+    reward: (key, id, n, miss) => api.life(key, id, n, miss),
+    enabled: () => !!model.skills && !defense,
+    winter: () => model.season !== false && season() === 'snow',
+    img: (name) => skImg(name),
+  });
   api.onCursor((p) => {
     if (dragging) return; // 끄는 중에는 창의 실제 마우스 이벤트를 쓴다
     mouse = p;

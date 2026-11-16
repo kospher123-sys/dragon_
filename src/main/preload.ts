@@ -36,6 +36,8 @@ const api: Api = {
     pet: (id) => ipcRenderer.invoke('desk:pet', id),
     bounty: () => ipcRenderer.invoke('desk:bounty'),
     defend: () => ipcRenderer.invoke('desk:defend'),
+    brand: (name) => ipcRenderer.invoke('desk:brand', name),
+    life: (key, id, n, miss) => ipcRenderer.invoke('desk:life', { key, id, n, miss }),
   },
 };
 

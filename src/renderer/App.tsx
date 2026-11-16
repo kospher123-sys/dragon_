@@ -27,7 +27,7 @@ export function App() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [tab, setTab] = useState<Tab>('map');
-  const [showHelp, setShowHelp] = useState(() => { try { return localStorage.getItem('bf-help-seen') !== '3'; } catch { return true; } });
+  const [showHelp, setShowHelp] = useState(() => { try { return localStorage.getItem('bf-help-seen') !== '4'; } catch { return true; } });
   const [sel, setSel] = useState('');
   const [focusLair, setFocusLair] = useState<number | null>(null);
   const [laterPrompt, setLaterPrompt] = useState<number | null>(null);
@@ -145,19 +145,22 @@ export function App() {
       {!summary && init.features && showHelp && (
         <div className="overlay">
           <div className="modal">
-            <small>VERSION 1.5</small>
-            <h2>1.5.0에서 새로 생긴 것</h2>
+            <small>VERSION 1.6</small>
+            <h2>1.6.0에서 새로 생긴 것</h2>
             <ul className="help-list">
               <li><b>성장</b> · 드래곤 상세 탭에서 수련(근력·비늘·날개)과 각성. 고대 유물을 씁니다.</li>
               <li><b>자동 사냥</b> · 드래곤 상세·지도·레어 탭·트레이에서 켭니다. 레어에 지킴이 한 마리는 남깁니다.</li>
               <li><b>인간과의 만남</b> · 공물·음유시인·결투·순례자. 바탕화면에서 직접 찾아옵니다.</li>
               <li><b>바탕화면</b> · 출격·귀환 비행, 성격별 행동, 수다, 계절·특별한 날 연출. 조종 모드에서 쓰다듬기·몬스터 퇴치 보상.</li>
               <li><b>레어 꾸미기</b> · 둥지 장식 4종, 업적 10개(역사 탭).</li>
-              <li><b>종족 고유 스킬</b> · 12종 × 4스킬. 조종 모드·방어전·전투 창에 스킬 모션과 이펙트, 바탕화면에서 가끔 생활 스킬 연출. 드래곤 상세에서 확인. '아군 필요' 12개는 전투 효과까지 적용(혼자 판본), 나머지는 연출만.</li>
+              <li><b>스킬이 진짜로 동작</b> · 전투 스킬 36개 모두 고유 효과. 조건·쿨다운에 따라 자동으로 고릅니다(궁극기 &gt; 방어 &gt; 공격). 드래곤 상세의 스킬 카드에 실제 수치가 있습니다.</li>
+              <li><b>적도 달라짐</b> · 용사는 힘을 모아 큰 공격을 예고하고, 창기사는 방진, 마법사는 축복·범위 공격, 궁수·암살자는 가끔 피합니다.</li>
+              <li><b>생활 스킬 놀이</b> · 바탕화면에서 커서를 올려 반응합니다: 구들돌·조개·꽃시계·등대 빛줄기·반짝임·8자 춤·간헐천·봉합 점·사금 흔들기·큰 눈송이·섬광. 작은 기력·유물·사냥 보너스(하루 한도 있음).</li>
+              <li><b>종족 고유 스킬</b> · 12종 × 4스킬. 조종 모드·방어전·전투 창에 스킬 모션과 이펙트. '아군 필요' 12개는 아직 혼자 판본입니다.</li>
               <li><b>단축키</b> · Ctrl+Alt+D 바탕화면 숨기기 · Ctrl+Alt+M 관리 창.</li>
             </ul>
             <p className="fine">기존 연대기를 그대로 이어 갑니다. 새 규칙은 설정 탭의 실험 규칙에서 끌 수 있습니다. 자세한 내용은 압축 안의 안내.txt에 있습니다.</p>
-            <button className="primary" onClick={() => { setShowHelp(false); try { localStorage.setItem('bf-help-seen', '3'); } catch { /* 저장 안 돼도 괜찮음 */ } }}>시작하기</button>
+            <button className="primary" onClick={() => { setShowHelp(false); try { localStorage.setItem('bf-help-seen', '4'); } catch { /* 저장 안 돼도 괜찮음 */ } }}>시작하기</button>
           </div>
         </div>
       )}
